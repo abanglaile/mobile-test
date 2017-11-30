@@ -40,7 +40,6 @@ class MyTest extends React.Component {
 
   loadTest(){
     // var student_id = '1';
-    console.log("student_id:"+this.props.student_id);
     this.props.getMyTestList(this.props.student_id);
   }
 
@@ -125,6 +124,5 @@ export default connect(state => {
   return {
     my_test_list: student_state.my_test_list, 
     isFetching: student_state.isFetching,
-    student_id:state.AuthData.get('userid'), 
   }
 }, action)(MyTest);

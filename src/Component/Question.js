@@ -158,22 +158,23 @@ class Question extends React.Component {
   }
 
   renderAnswer(){
-    const {exercise, exindex} = this.props;
-    const {exercise_type, answers} = exercise[exindex];
+    const {exercise, exindex, test_log} = this.props;
+    const {exercise_type, answer} = exercise[exindex];
+    const {user_answer} = test_log[exindex];
+    console.log(answer);
+    const answerJson = JSON.parse(answer);
     switch(exercise_type){
       case 0:
+        //TO-DO: 添加多个填空答案
         return (
-          <List>
-            {answers.map((i, index) => (
-                <img src={title_img_url} height="2rem"/>
-              ))}
-          </List>
+          <MathInput onChange={(v) => this.onInputChange(v)} />
+
         );
       case 1:
       //选择题
         return (
-            <List>
-              {answers.map((i,index) => (
+            <List key={'answer'+ exindex}>
+              {answerJson.map((i,index) => (
                 <CheckboxItem key={index} onChange={() => this.onSelectChange(index)} wrap>
                   <Tex content = {i.value} />
                 </CheckboxItem>
@@ -181,11 +182,14 @@ class Question extends React.Component {
             </List>
           );
       case 2:
-        //TO-DO: 添加多个填空答案
         return (
-
-          <MathInput onChange={(v) => this.onInputChange(v)} />
-
+          <List key={'answer'+ exindex}>
+            {answerJson.map((i, index) => (
+                <CheckboxItem key={index} onChange={() => this.onSelectChange(index)}>
+                  <img src={i.url} style={{height: "1rem", width: "auto"}}/>
+                </CheckboxItem>
+              ))}
+          </List>
         );
       default:
         return;

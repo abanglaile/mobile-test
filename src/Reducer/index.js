@@ -4,9 +4,9 @@ import jwtDecode from 'jwt-decode';
 const defaulatTestData = Immutable.fromJS({
         isFetching: false,
         exindex: 0, 
-        exercise: [{title: '', answer: '', type: 0, breakdown: []}],
+        exercise: [{title: '', answer: '[]', type: 0, breakdown: []}],
         modalOpen: false,
-        test_log: [],
+        test_log: [{}],
         record: {correct: 0, new_rating: 0},
     });
 const defaulatStudentData = Immutable.fromJS({

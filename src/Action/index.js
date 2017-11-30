@@ -257,8 +257,8 @@ export const getTestData = (student_id, test_id) => {
         dispatch(getTestStart());
         return NetUtil.get(url, {test_id, student_id}, json => {
             console.log(json);
-            dispatch(push("/mobile-test/Question"));
             dispatch(getTestSuccess(json, test_id));
+            dispatch(push("/mobile-test/Question"));
             dispatch(updateExerciseST());
         }, errors => {
             console.log(errors);
@@ -362,10 +362,10 @@ export const closeModal = () => {
 
 //更新题目数
 export const updateExindex = (exindex) => {
-	return {
-		type: 'UPDATE_EXINDEX',
-		exindex,
-	}
+    return {
+        type: 'UPDATE_EXINDEX',
+        exindex,
+    }
 }
 
 const updateFinishTime = () => {
@@ -393,8 +393,8 @@ export const updateExerciseST = () => {
 //提交单题测试结果
 export const updateTestLog = (test_log) => {
     return {
-    	type: 'UPDATE_TEST_LOG',
-    	test_log,
+        type: 'UPDATE_TEST_LOG',
+        test_log,
     }
 }
 
@@ -477,7 +477,10 @@ export const submitExerciseLog = (exercise, userAnswer, ac_time, student_rating)
             exercise_id: exercise_id, 
             exercise_state: result,
             submit_time: new Date(),
-            answer: JSON.stringify(userAnswer),
+            //原题答案
+            exercise_answer: answer,
+            //用户答案
+            user_answer: userAnswer,
             delta_exercise_rating: Math.ceil(K*(ex_SA - ex_delta)), 
             delta_student_rating: Math.ceil(K*(st_SA - st_delta)),
             breakdown_sn: breakdown_sn
@@ -513,14 +516,14 @@ export const submitExerciseLog = (exercise, userAnswer, ac_time, student_rating)
 
 export const getStudentData = (student_id) => {
     return (dispatch) => {
-    	dispatch(getDataStart());
-    	let url = target + '/klmanager/getStudentData';
-    	return NetUtil.post(url, {test_id, student_id}, json => {
-    		console.log(json);
-    		dispatch(getStudentDataSuccess(json));
-    	}, errors => {
-    		console.log(errors);
-    	});
+        dispatch(getDataStart());
+        let url = target + '/klmanager/getStudentData';
+        return NetUtil.post(url, {test_id, student_id}, json => {
+            console.log(json);
+            dispatch(getStudentDataSuccess(json));
+        }, errors => {
+            console.log(errors);
+        });
     }
 }
 
@@ -538,15 +541,15 @@ export const getTestStatus = (student_id, test_id) => {
 
 export const getTestResult = (student_id, test_id) => {
     return (dispatch) => {
-    	dispatch(getDataStart());
-    	let url = target + '/klmanager/getTestResult';
-    	return NetUtil.post(url, {student_id, test_id}, json => {
-    		console.log(json);
-    		dispatch(getTestResultSuccess(json));
+        dispatch(getDataStart());
+        let url = target + '/klmanager/getTestResult';
+        return NetUtil.post(url, {student_id, test_id}, json => {
+            console.log(json);
+            dispatch(getTestResultSuccess(json));
             // dispatch(push("/mobile-test/testResult"));
-    	}, errors => {
-    		console.log(errors);
-    	});
+        }, errors => {
+            console.log(errors);
+        });
     }
 }
 
