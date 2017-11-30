@@ -124,5 +124,6 @@ export default connect(state => {
   return {
     my_test_list: student_state.my_test_list, 
     isFetching: student_state.isFetching,
+    student_id: "1",//state.AuthData.get('userid'), 
   }
 }, action)(MyTest);
