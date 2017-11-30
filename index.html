@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 	<meta charset="utf-8" />
+ 	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/mobile-test/mathquill/mathquill.css">
+    <link rel="stylesheet" href="/mobile-test/lib/katex/katex.css">
+    <link rel="stylesheet" href="/mobile-test/css/overrides.css">
+    <link rel="stylesheet" href="/mobile-test/css/echo.css">
+    <link rel="stylesheet" href="/mobile-test/css/popover.css">
+    <title>Math Input</title>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+  <script>
+    if ('addEventListener' in document) {
+      document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+      }, false);
+    }
+    if(!window.Promise) {
+      document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+    }
+  </script>
+</head>
+<body>
+
+<div id="root"></div>
+<script src="/mobile-test/lib/i18n.js"></script>
+<script src="/mobile-test/lib/icu-slim.js"></script>
+<script src="/mobile-test/lib/katex/katex.js"></script>
+<script src="/mobile-test/lib/jquery/jquery.min.js"></script>
+<script src="/mobile-test/mathquill/mathquill.js"></script>
+<script src="/mobile-test/lib/babel-polyfill/browser.js"></script>
+<script src="/mobile-test/build/deps.js"></script>
+<script src="/mobile-test/build/app.js"></script>
+
+</body>
+</html>
