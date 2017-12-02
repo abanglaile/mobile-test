@@ -25,6 +25,7 @@ class TestStatus extends React.Component {
     const test_id = params.test_id;
     if(test_id){
       this.props.getTestStatus(student_id, test_id);
+      this.props.getTestRankingList(test_id);
     }else{
       alert("页面参数错误");
     }

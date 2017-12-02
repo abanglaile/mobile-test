@@ -209,6 +209,13 @@ const getTestStatusSuccess = (json, test_id, isFinish) => {
     }
 }
 
+const getTestRankingListSuccess = (json) => {
+    return {
+        type: 'GET_TEST_RANKLIST_SUCCESS',
+        json,
+    }
+}
+
 //成功获取测试结果数据
 const getTestResultSuccess = (json) => {
     return {
@@ -529,10 +536,22 @@ export const getStudentData = (student_id) => {
 
 export const getTestStatus = (student_id, test_id) => {
     return (dispatch) => {
-        dispatch(getDataStart());
+        dispatch(getTestStart());
         let url = target + '/klmanager/getTestStatus';
         return NetUtil.post(url, {test_id}, json => {
             dispatch(getTestStatusSuccess(json, test_id));
+        }, errors => {
+            console.log(errors);
+        });
+    }
+}
+
+export const getTestRankingList = (test_id) => {
+    return (dispatch) => {
+        dispatch(getTestStart());
+        let url = target + '/klmanager/getTestRankingList';
+        return NetUtil.post(url, {test_id}, json => {
+            dispatch(getTestRankingListSuccess(json));
         }, errors => {
             console.log(errors);
         });
