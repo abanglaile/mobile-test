@@ -36,45 +36,44 @@ class TestStatus extends React.Component {
     ranking_list = [
       {
         student_name: 'levin',
-        correct: 2,
+        correct_exercise: 2,
         test_time: '10:05',
       },
       {
         student_name: 'fly',
-        correct: 1,
+        correct_exercise: 1,
         test_time: '07:20',
       },
       {
         student_name: 'leaf',
-        correct:1,
+        correct_exercise:1,
         test_time: '06:01',
       },
       {
         student_name: 'leaf',
-        correct:1,
+        correct_exercise:1,
         test_time: '06:01',
       },
       {
         student_name: 'leaf',
-        correct:3,
+        correct_exercise:3,
         test_time: '06:01',
       },
       {
         student_name: 'leaf',
-        correct:5,
+        correct_exercise:5,
         test_time: '06:01',
       }
     ];
-    ranking_list.sort(compare('correct'));
     return (
       <List renderHeader="测试排行榜">
           {
             ranking_list.map((item, i) => {
               return (
                 <Item arrow="horizontal"
-                  extra={<div><Icon type="check" />{item.correct}</div>}>
+                  extra={<div><Icon type="check" />{item.correct_exercise}</div>}>
                   {item.student_name}
-                  <Brief>{item.test_time}</Brief>
+                  <Brief>{item.test_time}min</Brief>
                 </Item>
               )
             })
