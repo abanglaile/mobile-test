@@ -260,6 +260,7 @@ export const getMyChapter = (student_id, course_id) => {
 //获取指定测试的数据
 export const getTestData = (student_id, test_id) => {
     let url = target + '/klmanager/getExerciseByTest';
+    console.log(student_id, test_id);
     return dispatch => {
         dispatch(getTestStart());
         return NetUtil.get(url, {test_id, student_id}, json => {
@@ -307,11 +308,14 @@ export const submitFeedBack = (exindex, breakdown_sn) => {
     return {
         type: 'SUBMIT_FEEDBACK',
         exindex,
-        breakdown_sn,
     }
 }
 
-export const jumpNext = (isQ) => {
+/**
+ * 提交后跳转到下一题
+ * @param  {Boolean} isQ [true:题目页面跳转/false:导学页面跳转]
+ */
+export const jumpNext = (answerTestDisplay) => {
     return (dispatch, getState) => {
         const testData = getState().testData;
         const exindex = testData.get("exindex");
@@ -319,33 +323,43 @@ export const jumpNext = (isQ) => {
         const exercise = testData.get("exercise").toJS();
         const exercise_state = test_log[exindex].exercise_state;
         const blength = exercise[exindex].breakdown.length;
-        var next = -1;
-        for(var i = 0; i < exercise.length; i++){
-            if(!test_log[i].delta_student_rating){
-                next = i;
-                break;
+        if(!answerTestDisplay || exercise_state || blength == 1){
+            var next = -1;
+            var i = exindex + 1;
+            while(i != exindex){
+                if(test_log[i].exercise_state < 0){
+                    next = i;
+                    break;
+                }
+                i = ++i%exercise.length;
             }
-        }
-        if(!isQ || exercise_state || blength == 1){
             //还有未完成的题目
             if(next >= 0){
                 console.log('update');
                 dispatch(closeModal());
                 dispatch(updateExindex(next));
                 dispatch(updateExerciseST());
-                dispatch(push("/mobile-test/Question"));
+                //dispatch(push("/mobile-test/Question"));
             }
+            //题目全部完成
             else{
-                //全部完成
-                console.log("submit");
-                //测试完成，提交数据
+                //测试完成，记录测试结束时间
                 dispatch(updateFinishTime());
-                const {testData} = getState();
-                var test_state = testData.toJS();
-                console.log(test_state);
+                const testData = getState().testData.toJS();
+                console.log(testData);
                 dispatch(submitTestStart());
                 let url = target + '/klmanager/submitTest';
-                return NetUtil.post(url, {student_id: '1', student_rating: 500, test_result: test_state}, json => {
+
+                /**
+                 * [提交后台测试数据]
+                 */
+                const test_result = {
+                    test_id: testData.test_id,
+                    test_log: testData.test_log,
+                    start_time: testData.start_time,
+                    finish_time: testData.finish_time,
+                }
+                return NetUtil.post(url, {student_id: '1', student_rating: 500, test_result: test_result}, json => {
                     console.log(json);
                     dispatch(submitTestSuccess(json));
                     dispatch(push("/mobile-test/kpTestResult"));
@@ -356,8 +370,15 @@ export const jumpNext = (isQ) => {
         }else{
             console.log('jump');
             dispatch(closeModal());
-            dispatch(push("/mobile-test/AnswerTest"));
+            dispatch(displayAnswerTest());
+            //dispatch(push("/mobile-test/AnswerTest"));
         }
+    }
+}
+
+export const displayAnswerTest = () => {
+    return {
+        type: 'DISPLAY_ANSWER_TEST',
     }
 }
 
@@ -420,7 +441,7 @@ const submitTestSuccess = (json) => {
   }
 }
 
-const checkAnswer = (exercise_type, exAnswer, userAnswer) => {
+const checkAnswer = (exercise_type, log_answer) => {
     var result = 1;
     switch(exercise_type){
         case 0:
@@ -443,16 +464,21 @@ const checkAnswer = (exercise_type, exAnswer, userAnswer) => {
             }
             break;
         case 1:
-            const xornum = [1, 2, 4, 8];
-            var checkAnswer = 0;
-            for(var i = 0; i < exAnswer.length; i++){
-                if(exAnswer[i].correct)
-                checkAnswer += xornum[i];
+            for(var i = 0; i < log_answer.length; i++){
+                if(log_answer[i].correct != log_answer[i].select){
+                    return 0;
+                }
             }
-            //选择题
-            if(userAnswer != exAnswer){
-                result = 0;
-            }
+            // const xornum = [1, 2, 4, 8];
+            // var checkAnswer = 0;
+            // for(var i = 0; i < exAnswer.length; i++){
+            //     if(exAnswer[i].correct)
+            //     checkAnswer += xornum[i];
+            // }
+            // //选择题
+            // if(userAnswer != exAnswer){
+            //     result = 0;
+            // }
             break;
         default:
             break;
@@ -461,14 +487,35 @@ const checkAnswer = (exercise_type, exAnswer, userAnswer) => {
 }
 
 /**
+ * [修改题目选项]
+ */
+export const selectChange = (exindex, index) => {
+    return{
+        type: 'EXERCISE_SELECT_CHANGE',
+        exindex,
+        index,
+    } 
+}
+
+/**
+ * [修改反馈选项]
+ */
+export const breakdownSelectChange = (exindex, index) => {
+    return{
+        type: 'BREAKDOWN_SN_SELECT_CHANGE',
+        exindex,
+        index,
+    } 
+}
+
+
+
+/**
  * [提交单题测试结果]
  */
-export const submitExerciseLog = (exercise, userAnswer, ac_time, student_rating) => {
-    console.log(userAnswer);
+export const submitExerciseLog = (exercise, log_answer, student_rating) => {
     const {exercise_id, answer, exercise_type, exercise_rating, breakdown} = exercise;
-    console.log(answer);
-    const result = checkAnswer(exercise_type, answer, userAnswer);
-
+    const result = checkAnswer(exercise_type, log_answer);
     student_rating = 500;
 
     //计算学生、题目得分
@@ -484,13 +531,8 @@ export const submitExerciseLog = (exercise, userAnswer, ac_time, student_rating)
             exercise_id: exercise_id, 
             exercise_state: result,
             submit_time: new Date(),
-            //原题答案
-            exercise_answer: answer,
-            //用户答案
-            user_answer: userAnswer,
             delta_exercise_rating: Math.ceil(K*(ex_SA - ex_delta)), 
             delta_student_rating: Math.ceil(K*(st_SA - st_delta)),
-            breakdown_sn: breakdown_sn
         };
     if(result){
         for(var i = 0; i < breakdown.length; i++){

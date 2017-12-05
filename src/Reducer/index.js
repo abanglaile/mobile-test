@@ -100,11 +100,29 @@ export const testData = (state = defaulatTestData, action = {}) => {
             const start_time = new Date();
             var test_log = [];
             for(var i = 0; i < exercise.length; i++){
+                const breakdown = exercise[i].breakdown;
+                var breakdown_sn = [];
+                for(var j = 0; j < breakdown.length; j++){
+                  //如果没有前置步骤的都设为0并在渲染中显示，-1代表不确定在渲染中不显示
+                  const sn_state = breakdown[j].presn ? -1 : 0;
+                  breakdown_sn[j] = {
+                    sn: breakdown[j].sn, 
+                    kpid: breakdown[j].kpid,
+                    kpname: breakdown[j].kpname, 
+                    sn_state: sn_state, 
+                    presn: breakdown[j].presn, 
+                    kp_old_rating: breakdown[j].kp_rating, 
+                    sn_old_rating: breakdown[j].sn_rating
+                  };
+                }
                 test_log[i] = {
+                    exercise_state: -1,
+                    answer: JSON.parse(exercise[i].answer),
                     start_time: start_time,
+                    breakdown_sn: breakdown_sn,
                     ac_time: 0,
                 }
-            } 
+            }
             var newState = {
                 exercise: exercise, 
                 exindex: 0, 
@@ -136,6 +154,8 @@ export const testData = (state = defaulatTestData, action = {}) => {
             return state.updateIn(['test_log', action.i, 'ac_time'], ac_time => ac_time + action.ac_time);
         case 'UPDATE_FINISH_TIME':
             return state.set("finish_time", new Date());
+        case 'DISPLAY_ANSWER_TEST':
+            return state.set("answerTestDisplay", 1);
         case 'CLOSE_MODAL':
             return state.set('modalOpen', false);
         case 'SUBMIT_EXERCISE_LOG':
@@ -153,9 +173,24 @@ export const testData = (state = defaulatTestData, action = {}) => {
             // if(combo_correct > combo_max){
             //     combo_correct 
             // }
+        case 'EXERCISE_SELECT_CHANGE':
+            return state.updateIn(['test_log', action.exindex, 'answer', action.index, 'select'], select => !select)
+        case 'BREAKDOWN_SN_SELECT_CHANGE':
+            const val = action.index;
+
+            var breakdown_sn = state.getIn(['test_log', action.exindex, 'breakdown_sn']).toJS();
+            console.log(val, breakdown_sn);
+            breakdown_sn[val].sn_state = breakdown_sn[val].sn_state ? 0 : 1;
+            //取消选择，将以这步作为前置的步骤全部设为不确定-1并不渲染显示
+            for(var i = 0; i < breakdown_sn.length; i++){
+                if(breakdown_sn[i].presn == breakdown_sn[val].sn){
+                    //如果选择则把二级知识点设置为0，如果取消选择则把二级知识点设置为-1
+                    breakdown_sn[i].sn_state = breakdown_sn[val].sn_state ? 0 : -1;
+                }
+            }
+            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], Immutable.fromJS(breakdown_sn));
         case 'SUBMIT_FEEDBACK':
-            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], Immutable.fromJS(action.breakdown_sn))
-            .set('modalOpen', true);
+            return state.set('modalOpen', true);
         case 'SUBMIT_TEST_START':
             return state;
         case 'SUBMIT_TEST_SUCCESS':

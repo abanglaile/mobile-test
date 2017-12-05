@@ -15,6 +15,24 @@ class Question extends React.Component {
   constructor(props) { 
   	super(props);
   	this.onSelectChange = this.onSelectChange.bind(this);
+
+    var {exercise, exindex} = this.props;
+    const breakdown = exercise[exindex];
+    var breakdown_sn = [];
+    for(var i = 0; i < breakdown.length; i++){
+      //如果没有前置步骤的都设为0并在渲染中显示，-1代表不确定在渲染中不显示
+      const sn_state = breakdown[i].presn ? -1 : 0;
+      breakdown_sn[i] = {
+        sn: breakdown[i].sn, 
+        kpid: breakdown[i].kpid,
+        kpname: breakdown[i].kpname, 
+        sn_state: sn_state, 
+        presn: breakdown[i].presn, 
+        kp_old_rating: breakdown[i].kp_rating, 
+        sn_old_rating: breakdown[i].sn_rating
+      };
+    }
+    this.breakdown_sn = breakdown_sn;
   }
 
   // //初始化答案及选项
@@ -135,7 +153,7 @@ class Question extends React.Component {
       >
         {exercise.map((item, i) => (
           test_log[i].delta_student_rating
-          ? <List.Item extra={<Icon type={test_log[i].exercise_state ? 'check' : 'cross'} />} key={i}><span style={{color: "#CCC"}}>{i+1}</span></List.Item>
+          ? <List.Item onClick={e => this.jumpToExercise(e, i)} extra={<Icon type={test_log[i].exercise_state ? 'check' : 'cross'} />} key={i}>{i+1}</List.Item>
           : <List.Item arrow="horizontal" onClick={e => this.jumpToExercise(e, i)} key={i} >{i+1}</List.Item>
         ))}
       </List>
@@ -159,10 +177,11 @@ class Question extends React.Component {
 
   renderAnswer(){
     const {exercise, exindex, test_log} = this.props;
-    const {exercise_type, answer} = exercise[exindex];
-    const {user_answer} = test_log[exindex];
+    const {exercise_type} = exercise[exindex];
+    console.log(test_log);
+    const {answer, exercise_state} = test_log[exindex];
     console.log(answer);
-    const answerJson = JSON.parse(answer);
+    
     switch(exercise_type){
       case 0:
         //TO-DO: 添加多个填空答案
@@ -171,26 +190,54 @@ class Question extends React.Component {
 
         );
       case 1:
-      //选择题
+        //文字选择题
+        //已做完
+        if(exercise_state >= 0){
+          return (
+            <List key={'answer'+ exindex}>
+              {answer.map((i,index) => (
+                <CheckboxItem key={index} disabled defaultChecked = {i.select} 
+                  onChange={() => this.props.selectChange(exindex, index)} wrap>
+                  <Tex content = {i.value} />
+                </CheckboxItem>
+              ))}
+            </List>
+          );
+        }
+        //未做完
         return (
             <List key={'answer'+ exindex}>
-              {answerJson.map((i,index) => (
-                <CheckboxItem key={index} onChange={() => this.onSelectChange(index)} wrap>
+              {answer.map((i,index) => (
+                <CheckboxItem key={index} defaultChecked = {i.select} 
+                  onChange={() => this.props.selectChange(exindex, index)} wrap>
                   <Tex content = {i.value} />
                 </CheckboxItem>
               ))}
             </List>
           );
       case 2:
-        return (
-          <List key={'answer'+ exindex}>
-            {answerJson.map((i, index) => (
-                <CheckboxItem key={index} onChange={() => this.onSelectChange(index)}>
+        if(exercise_state >= 0){
+          return (
+            <List key={'answer'+ exindex}>
+              {answer.map((i,index) => (
+                <CheckboxItem key={index} disabled defaultChecked = {i.select} 
+                  onChange={() => this.props.selectChange(exindex, index)} wrap>
                   <img src={i.url} style={{height: "1rem", width: "auto"}}/>
                 </CheckboxItem>
               ))}
-          </List>
-        );
+            </List>
+          );  
+        }
+        return (
+            <List key={'answer'+ exindex}>
+              {answer.map((i,index) => (
+                <CheckboxItem key={index} defaultChecked = {i.select} 
+                  onChange={() => this.props.selectChange(exindex, index)} wrap>
+                  <img src={i.url} style={{height: "1rem", width: "auto"}}/>
+                </CheckboxItem>
+              ))}
+            </List>
+          );  
       default:
         return;
     }
@@ -224,10 +271,35 @@ class Question extends React.Component {
       ) 
   }
 
-  
+  renderBreakdown(){
+    const {exercise, exindex, answerTestDisplay, test_log} = this.props;
+    const {breakdown, title} = exercise[exindex];
+    
+    if(answerTestDisplay){
+      var {breakdown_sn} = test_log[exindex];
+      return (
+      <List renderHeader='请选择你做对的步骤'>
+        {breakdown.map((item,i) => {
+          console.log(breakdown_sn[i].sn_state);
+          const presn = item.presn;
+          //显示第一个或前置已经被选择（最后答案不显示）
+          if((i != breakdown.length - 1) && (breakdown_sn[i].sn_state >= 0 || (presn > 0 && breakdown_sn[presn - 1].sn_state > 0))){
+            return (
+            <CheckboxItem key={item.sn} check={breakdown_sn[i].sn_state} onChange={() => this.props.breakdownSelectChange(exindex, i)} wrap>
+              <Tex content = {item.content} />
+            </CheckboxItem>
+            )
+          }
+        })}
+      </List>
+      );  
+    }
+    
+    
+  }
 
   render() {
-    const {exercise, exindex, record} = this.props;
+    const {exercise, exindex, test_log, record} = this.props;
     console.log(exindex);
     const { title, options } = exercise[exindex];
     
@@ -257,6 +329,7 @@ class Question extends React.Component {
         ]}
       ></NavBar>
       <WingBlank>
+      {this.renderBreakdown()}
       <div style={{ margin: '30px 0 18px 0', fontSize: '0.3rem'}}>
       	<Tex content={title} />
       </div>
@@ -274,8 +347,8 @@ class Question extends React.Component {
             <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
             <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
           </div>
-          <Button style={{float: 'left', margin: '0.2rem 0 0 0'}}
-            onClick={e => this.props.submitExerciseLog(exercise[exindex], this.userAnswer)} 
+          <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+            onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
             type="primary" inline>
           Submit
           </Button>
@@ -290,7 +363,7 @@ class Question extends React.Component {
 export default connect(state => {
   const test_state = state.testData.toJS();
   console.log(test_state);
-  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time} = test_state;
+  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answerTestDisplay} = test_state;
   return {
     //整个测试以同一个开始时间
     start_time: start_time,
@@ -301,5 +374,6 @@ export default connect(state => {
     test_log: test_log,
     modalOpen: modalOpen,
     record: record,
+    answerTestDisplay: answerTestDisplay,
   }; 
 }, action)(Question);

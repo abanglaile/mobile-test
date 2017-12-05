@@ -51,13 +51,6 @@ class MyTest extends React.Component {
   	console.log('onTabClick', key);
   }
 
-
-  onStart(e, test_id){
-    console.log(test_id);
-    this.props.getTestData(test_id);
-    // this.props.history.push("/mobile-test/Question");
-  }
-
   render() {
     var {isFetching, my_test_list} = this.props;
     var finish_test = [], not_finish_test = [];
