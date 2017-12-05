@@ -7048,10 +7048,7 @@ webpackJsonp([0],[
 	    exercise: [{ title: '', answer: '[]', type: 0, breakdown: [] }],
 	    modalOpen: false,
 	    test_log: [{}],
-<<<<<<< HEAD
 	    ranking_list: [{}],
-=======
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	    record: { correct: 0, new_rating: 0 }
 	});
 	var defaulatStudentData = _immutable2.default.fromJS({
@@ -7238,7 +7235,7 @@ webpackJsonp([0],[
 	            }
 	            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], _immutable2.default.fromJS(breakdown_sn));
 	        case 'SUBMIT_FEEDBACK':
-	            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], _immutable2.default.fromJS(action.breakdown_sn)).set('modalOpen', true);
+	            return state.set('modalOpen', true);
 	        case 'SUBMIT_TEST_START':
 	            return state;
 	        case 'SUBMIT_TEST_SUCCESS':
@@ -12773,12 +12770,6 @@ webpackJsonp([0],[
 	          exercise = _props4.exercise,
 	          exindex = _props4.exindex,
 	          test_log = _props4.test_log;
-<<<<<<< HEAD
-	      var _exercise$exindex2 = exercise[exindex],
-	          exercise_type = _exercise$exindex2.exercise_type,
-	          answer = _exercise$exindex2.answer;
-	      var user_answer = test_log[exindex].user_answer;
-=======
 	      var exercise_type = exercise[exindex].exercise_type;
 
 	      console.log(test_log);
@@ -12787,10 +12778,7 @@ webpackJsonp([0],[
 	          exercise_state = _test_log$exindex.exercise_state;
 
 	      console.log(answer);
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 
-	      console.log(answer);
-	      var answerJson = JSON.parse(answer);
 	      switch (exercise_type) {
 	        case 0:
 	          //TO-DO: 添加多个填空答案
@@ -12798,13 +12786,6 @@ webpackJsonp([0],[
 	              return _this3.onInputChange(v);
 	            } });
 	        case 1:
-<<<<<<< HEAD
-	          //选择题
-	          return _react2.default.createElement(
-	            _list2.default,
-	            { key: 'answer' + exindex },
-	            answerJson.map(function (i, index) {
-=======
 	          //文字选择题
 	          //已做完
 	          if (exercise_state >= 0) {
@@ -12859,7 +12840,6 @@ webpackJsonp([0],[
 	            _list2.default,
 	            { key: 'answer' + exindex },
 	            answer.map(function (i, index) {
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	              return _react2.default.createElement(
 	                CheckboxItem,
 	                { key: index, defaultChecked: i.select,
@@ -12870,23 +12850,6 @@ webpackJsonp([0],[
 	              );
 	            })
 	          );
-<<<<<<< HEAD
-	        case 2:
-	          return _react2.default.createElement(
-	            _list2.default,
-	            { key: 'answer' + exindex },
-	            answerJson.map(function (i, index) {
-	              return _react2.default.createElement(
-	                CheckboxItem,
-	                { key: index, onChange: function onChange() {
-	                    return _this3.onSelectChange(index);
-	                  } },
-	                _react2.default.createElement('img', { src: i.url, style: { height: "1rem", width: "auto" } })
-	              );
-	            })
-	          );
-=======
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	        default:
 	          return;
 	      }
@@ -12950,7 +12913,6 @@ webpackJsonp([0],[
 
 
 	      if (answerTestDisplay) {
-	        console.log(exercise[exindex]);
 	        var breakdown_sn = test_log[exindex].breakdown_sn;
 
 	        return _react2.default.createElement(
@@ -55330,11 +55292,7 @@ webpackJsonp([0],[
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-<<<<<<< HEAD
-	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
-=======
-	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.breakdownSelectChange = exports.selectChange = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.displayAnswerTest = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
+	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.breakdownSelectChange = exports.selectChange = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.displayAnswerTest = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
 
 	var _NetUtil = __webpack_require__(643);
 
@@ -55653,8 +55611,7 @@ webpackJsonp([0],[
 	var submitFeedBack = exports.submitFeedBack = function submitFeedBack(exindex, breakdown_sn) {
 	    return {
 	        type: 'SUBMIT_FEEDBACK',
-	        exindex: exindex,
-	        breakdown_sn: breakdown_sn
+	        exindex: exindex
 	    };
 	};
 
@@ -55881,13 +55838,6 @@ webpackJsonp([0],[
 	        exercise_id: exercise_id,
 	        exercise_state: result,
 	        submit_time: new Date(),
-<<<<<<< HEAD
-	        //原题答案
-	        exercise_answer: answer,
-	        //用户答案
-	        user_answer: userAnswer,
-=======
->>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	        delta_exercise_rating: Math.ceil(K * (ex_SA - ex_delta)),
 	        delta_student_rating: Math.ceil(K * (st_SA - st_delta))
 	    };
@@ -57776,8 +57726,7 @@ webpackJsonp([0],[
 	});
 
 	var config = {
-	  // server_url: "http://39.108.85.119:3000",
-	  server_url: "http://127.0.0.1:3000"
+	  server_url: "http://39.108.85.119:3000"
 	};
 	//配置常用参数
 	exports.default = config;
@@ -60639,8 +60588,15 @@ webpackJsonp([0],[
 	      }
 	    }
 	  }, {
+	    key: 'PrefixInteger',
+	    value: function PrefixInteger(num, n) {
+	      return (Array(n).join(0) + num).slice(-n);
+	    }
+	  }, {
 	    key: 'renderRanking',
 	    value: function renderRanking() {
+	      var _this2 = this;
+
 	      var ranking_list = this.props.ranking_list;
 	      // ranking_list = [
 	      //   {
@@ -60679,6 +60635,10 @@ webpackJsonp([0],[
 	        _list2.default,
 	        { renderHeader: '\u6D4B\u8BD5\u6392\u884C\u699C' },
 	        ranking_list.map(function (item, i) {
+	          console.log("item:" + JSON.stringify(item));
+	          var t = (Date.parse(item.finish_time) - Date.parse(item.start_time)) / 1000;
+	          var min = _this2.PrefixInteger(parseInt(t / 60), 2);
+	          var sec = _this2.PrefixInteger(t % 60, 2);
 	          return _react2.default.createElement(
 	            Item,
 	            { arrow: 'horizontal',
@@ -60692,8 +60652,7 @@ webpackJsonp([0],[
 	            _react2.default.createElement(
 	              Brief,
 	              null,
-	              item.test_time,
-	              'min'
+	              min + ':' + sec
 	            )
 	          );
 	        })
@@ -60702,7 +60661,7 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      var _props2 = this.props,
 	          isFetching = _props2.isFetching,
@@ -60710,10 +60669,9 @@ webpackJsonp([0],[
 	          test_id = _props2.test_id,
 	          test_status = _props2.test_status,
 	          student_id = _props2.student_id;
-
-	      console.log("student_id again:" + student_id);
 	      //TO-DO
 	      // isFinish = false;
+
 	      var buttonStr = isFinish ? '测试记录' : '进入测试';
 	      // test_status.avg_accurracy = 30;
 	      // test_status.test_size = 16;
@@ -60725,7 +60683,7 @@ webpackJsonp([0],[
 	          {
 	            mode: 'light',
 	            onLeftClick: function onLeftClick() {
-	              return _this2.props.history.goBack();
+	              return _this3.props.history.goBack();
 	            }
 	          },
 	          '\u6D4B\u8BD5\u8BE6\u60C5'
@@ -60865,9 +60823,9 @@ webpackJsonp([0],[
 	              _button2.default,
 	              { style: { float: 'right', margin: '0.2rem 0.3rem 0 0' }, inline: true, type: 'primary',
 	                onClick: isFinish ? function (e) {
-	                  return _this2.props.router.push("/mobile-test/TestResult/" + test_id);
+	                  return _this3.props.router.push("/mobile-test/TestResult/" + test_id);
 	                } : function (e) {
-	                  return _this2.props.getTestData(student_id, test_id);
+	                  return _this3.props.getTestData(student_id, test_id);
 	                } },
 	              buttonStr
 	            )

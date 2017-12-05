@@ -25,6 +25,10 @@ class TestStatus extends React.Component {
     }
   }
 
+  PrefixInteger(num, n) {
+    return (Array(n).join(0) + num).slice(-n);
+  }
+
   renderRanking(){
     var {ranking_list} = this.props;
     // ranking_list = [
@@ -63,11 +67,15 @@ class TestStatus extends React.Component {
       <List renderHeader="测试排行榜">
           {
             ranking_list.map((item, i) => {
+              console.log("item:"+JSON.stringify(item));
+              var t = (Date.parse(item.finish_time) - Date.parse(item.start_time))/1000;
+              var min = this.PrefixInteger(parseInt(t/60), 2);
+              var sec = this.PrefixInteger(t%60, 2);
               return (
                 <Item arrow="horizontal"
                   extra={<div><Icon type="check" />{item.correct_exercise}</div>}>
                   {item.student_name}
-                  <Brief>{item.test_time}min</Brief>
+                  <Brief>{min + ':' + sec}</Brief>
                 </Item>
               )
             })
