@@ -209,12 +209,20 @@ const getTestStatusSuccess = (json, test_id, isFinish) => {
     }
 }
 
+const getStuTestInfoSuccess = (json) => {
+    return {
+        type: 'GET_STU_TESTINFO_SUCCESS',
+        json,
+    }
+}
+
 const getTestRankingListSuccess = (json) => {
     return {
         type: 'GET_TEST_RANKLIST_SUCCESS',
         json,
     }
 }
+
 
 //成功获取测试结果数据
 const getTestResultSuccess = (json) => {
@@ -557,6 +565,18 @@ export const getTestRankingList = (test_id) => {
         });
     }
 }
+
+export const getStuTestInfo = (student_id,test_id) => {
+    return (dispatch) => {
+        let url = target + '/klmanager/getStuTestInfo';
+        return NetUtil.post(url, {student_id,test_id}, json => {
+            dispatch(getStuTestInfoSuccess(json));
+        }, errors => {
+            console.log(errors);
+        });
+    }
+}
+
 
 export const getTestResult = (student_id, test_id) => {
     return (dispatch) => {

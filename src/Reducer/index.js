@@ -3,6 +3,8 @@ import jwtDecode from 'jwt-decode';
 
 const defaulatTestData = Immutable.fromJS({
         isFetching: false,
+        isFinish : 0,
+        student_rating : 0,
         exindex: 0, 
         exercise: [{title: '', answer: '[]', type: 0, breakdown: []}],
         modalOpen: false,
@@ -90,11 +92,14 @@ export const testData = (state = defaulatTestData, action = {}) => {
         case 'GET_TEST_STATUS_SUCCESS':
             console.log(action.json);
             return state.set('test_status', Immutable.fromJS(action.json.test_status))
-                .set('isFinish', action.isFinish)
                 .set('test_id', action.test_id);
         case 'GET_TEST_RANKLIST_SUCCESS':
             console.log(action.json);
             return state.set('ranking_list', Immutable.fromJS(action.json));
+        case 'GET_STU_TESTINFO_SUCCESS':
+            console.log(action.json);
+            return state.set('isFinish', action.json.isFinish)
+                        .set('student_rating', action.json.student_rating);
         case 'GET_TEST_SUCCESS':
             const exercise = action.json;
             const start_time = new Date();

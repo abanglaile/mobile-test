@@ -7,14 +7,6 @@ import { Progress } from 'antd';
 const Item = List.Item;
 const Brief = Item.Brief;
 
-function compare(property){//用于排序--降序
-    return (a,b)=>(b[property]-a[property]);
-}
-
-function compareRise(property){//用于排序--升序
-    return (a,b)=>(a[property]-b[property]);
-}
-
 class TestStatus extends React.Component {
   constructor(props) {
     super(props);
@@ -23,9 +15,11 @@ class TestStatus extends React.Component {
   componentDidMount(){
     const {student_id, params} = this.props;
     const test_id = params.test_id;
+    console.log("student_id params:"+student_id+' '+params);
     if(test_id){
       this.props.getTestStatus(student_id, test_id);
       this.props.getTestRankingList(test_id);
+      this.props.getStuTestInfo(student_id,test_id);
     }else{
       alert("页面参数错误");
     }
@@ -33,38 +27,38 @@ class TestStatus extends React.Component {
 
   renderRanking(){
     var {ranking_list} = this.props;
-    ranking_list = [
-      {
-        student_name: 'levin',
-        correct_exercise: 2,
-        test_time: '10:05',
-      },
-      {
-        student_name: 'fly',
-        correct_exercise: 1,
-        test_time: '07:20',
-      },
-      {
-        student_name: 'leaf',
-        correct_exercise:1,
-        test_time: '06:01',
-      },
-      {
-        student_name: 'leaf',
-        correct_exercise:1,
-        test_time: '06:01',
-      },
-      {
-        student_name: 'leaf',
-        correct_exercise:3,
-        test_time: '06:01',
-      },
-      {
-        student_name: 'leaf',
-        correct_exercise:5,
-        test_time: '06:01',
-      }
-    ];
+    // ranking_list = [
+    //   {
+    //     student_name: 'levin',
+    //     correct_exercise: 2,
+    //     test_time: '10:05',
+    //   },
+    //   {
+    //     student_name: 'fly',
+    //     correct_exercise: 1,
+    //     test_time: '07:20',
+    //   },
+    //   {
+    //     student_name: 'leaf',
+    //     correct_exercise:1,
+    //     test_time: '06:01',
+    //   },
+    //   {
+    //     student_name: 'leaf',
+    //     correct_exercise:1,
+    //     test_time: '06:01',
+    //   },
+    //   {
+    //     student_name: 'leaf',
+    //     correct_exercise:3,
+    //     test_time: '06:01',
+    //   },
+    //   {
+    //     student_name: 'leaf',
+    //     correct_exercise:5,
+    //     test_time: '06:01',
+    //   }
+    // ];
     return (
       <List renderHeader="测试排行榜">
           {
@@ -83,12 +77,12 @@ class TestStatus extends React.Component {
   }
 
   render() {
-    var {isFetching, isFinish, test_id, test_status} = this.props;
+    var {isFetching, isFinish, test_id, test_status,student_id} = this.props;
     //TO-DO
     // isFinish = false;
     const buttonStr = isFinish ? '测试记录' : '进入测试';
-    test_status.avg_accurracy = 30;
-    test_status.test_size = 16;
+    // test_status.avg_accurracy = 30;
+    // test_status.test_size = 16;
     return (
       <div>
         <NavBar
@@ -161,7 +155,7 @@ class TestStatus extends React.Component {
           <Button style={{float: 'right', margin: '0.2rem 0.3rem 0 0'}} inline type="primary"
             onClick={ isFinish
               ? e => this.props.router.push("/mobile-test/TestResult/"+ test_id)  
-              : e => this.props.getTestData('1', test_id) 
+              : e => this.props.getTestData(student_id, test_id) 
               } >
               {buttonStr}
           </Button>
@@ -174,7 +168,7 @@ class TestStatus extends React.Component {
 
 export default connect(state => {
   const test_state = state.testData.toJS();
-  const {test_id, isFetching, isFinish, modalOpen, test_status, ranking_list} = test_state;
+  const {test_id, isFetching, isFinish, modalOpen, test_status, ranking_list,student_rating} = test_state;
   const default_status = {
     avg_accuracy: 0,
     test_students: 0,
@@ -187,6 +181,7 @@ export default connect(state => {
     isFetching: isFetching,
     modalOpen: modalOpen,
     isFinish: isFinish,
+    student_rating: student_rating,
     test_status: test_status ? test_status : default_status,
     ranking_list: ranking_list ? ranking_list : [],
     test_id: test_id,

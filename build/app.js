@@ -7042,10 +7042,13 @@ webpackJsonp([0],[
 
 	var defaulatTestData = _immutable2.default.fromJS({
 	    isFetching: false,
+	    isFinish: 0,
+	    student_rating: 0,
 	    exindex: 0,
-	    exercise: [{ title: '', answer: '', type: 0, breakdown: [] }],
+	    exercise: [{ title: '', answer: '[]', type: 0, breakdown: [] }],
 	    modalOpen: false,
-	    test_log: [],
+	    test_log: [{}],
+	    ranking_list: [{}],
 	    record: { correct: 0, new_rating: 0 }
 	});
 	var defaulatStudentData = _immutable2.default.fromJS({
@@ -7129,7 +7132,13 @@ webpackJsonp([0],[
 	            return state.set('isFetching', true);
 	        case 'GET_TEST_STATUS_SUCCESS':
 	            console.log(action.json);
-	            return state.set('test_status', _immutable2.default.fromJS(action.json.test_status)).set('isFinish', action.isFinish).set('test_id', action.test_id);
+	            return state.set('test_status', _immutable2.default.fromJS(action.json.test_status)).set('test_id', action.test_id);
+	        case 'GET_TEST_RANKLIST_SUCCESS':
+	            console.log(action.json);
+	            return state.set('ranking_list', _immutable2.default.fromJS(action.json));
+	        case 'GET_STU_TESTINFO_SUCCESS':
+	            console.log(action.json);
+	            return state.set('isFinish', action.json.isFinish).set('student_rating', action.json.student_rating);
 	        case 'GET_TEST_SUCCESS':
 	            var exercise = action.json;
 	            var start_time = new Date();
@@ -12702,26 +12711,27 @@ webpackJsonp([0],[
 
 	      var _props4 = this.props,
 	          exercise = _props4.exercise,
-	          exindex = _props4.exindex;
+	          exindex = _props4.exindex,
+	          test_log = _props4.test_log;
 	      var _exercise$exindex2 = exercise[exindex],
 	          exercise_type = _exercise$exindex2.exercise_type,
-	          answers = _exercise$exindex2.answers;
+	          answer = _exercise$exindex2.answer;
+	      var user_answer = test_log[exindex].user_answer;
 
+	      console.log(answer);
+	      var answerJson = JSON.parse(answer);
 	      switch (exercise_type) {
 	        case 0:
-	          return _react2.default.createElement(
-	            _list2.default,
-	            null,
-	            answers.map(function (i, index) {
-	              return _react2.default.createElement('img', { src: title_img_url, height: '2rem' });
-	            })
-	          );
+	          //TO-DO: 添加多个填空答案
+	          return _react2.default.createElement(_app2.default, { onChange: function onChange(v) {
+	              return _this3.onInputChange(v);
+	            } });
 	        case 1:
 	          //选择题
 	          return _react2.default.createElement(
 	            _list2.default,
-	            null,
-	            answers.map(function (i, index) {
+	            { key: 'answer' + exindex },
+	            answerJson.map(function (i, index) {
 	              return _react2.default.createElement(
 	                CheckboxItem,
 	                { key: index, onChange: function onChange() {
@@ -12732,10 +12742,19 @@ webpackJsonp([0],[
 	            })
 	          );
 	        case 2:
-	          //TO-DO: 添加多个填空答案
-	          return _react2.default.createElement(_app2.default, { onChange: function onChange(v) {
-	              return _this3.onInputChange(v);
-	            } });
+	          return _react2.default.createElement(
+	            _list2.default,
+	            { key: 'answer' + exindex },
+	            answerJson.map(function (i, index) {
+	              return _react2.default.createElement(
+	                CheckboxItem,
+	                { key: index, onChange: function onChange() {
+	                    return _this3.onSelectChange(index);
+	                  } },
+	                _react2.default.createElement('img', { src: i.url, style: { height: "1rem", width: "auto" } })
+	              );
+	            })
+	          );
 	        default:
 	          return;
 	      }
@@ -55136,7 +55155,7 @@ webpackJsonp([0],[
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
+	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
 
 	var _NetUtil = __webpack_require__(643);
 
@@ -55351,6 +55370,20 @@ webpackJsonp([0],[
 	    };
 	};
 
+	var getStuTestInfoSuccess = function getStuTestInfoSuccess(json) {
+	    return {
+	        type: 'GET_STU_TESTINFO_SUCCESS',
+	        json: json
+	    };
+	};
+
+	var getTestRankingListSuccess = function getTestRankingListSuccess(json) {
+	    return {
+	        type: 'GET_TEST_RANKLIST_SUCCESS',
+	        json: json
+	    };
+	};
+
 	//成功获取测试结果数据
 	var getTestResultSuccess = function getTestResultSuccess(json) {
 	    return {
@@ -55398,8 +55431,8 @@ webpackJsonp([0],[
 	        dispatch(getTestStart());
 	        return _NetUtil2.default.get(url, { test_id: test_id, student_id: student_id }, function (json) {
 	            console.log(json);
-	            dispatch((0, _reactRouterRedux.push)("/mobile-test/Question"));
 	            dispatch(getTestSuccess(json, test_id));
+	            dispatch((0, _reactRouterRedux.push)("/mobile-test/Question"));
 	            dispatch(updateExerciseST());
 	        }, function (errors) {
 	            console.log(errors);
@@ -55624,7 +55657,10 @@ webpackJsonp([0],[
 	        exercise_id: exercise_id,
 	        exercise_state: result,
 	        submit_time: new Date(),
-	        answer: JSON.stringify(userAnswer),
+	        //原题答案
+	        exercise_answer: answer,
+	        //用户答案
+	        user_answer: userAnswer,
 	        delta_exercise_rating: Math.ceil(K * (ex_SA - ex_delta)),
 	        delta_student_rating: Math.ceil(K * (st_SA - st_delta)),
 	        breakdown_sn: breakdown_sn
@@ -55673,10 +55709,33 @@ webpackJsonp([0],[
 
 	var getTestStatus = exports.getTestStatus = function getTestStatus(student_id, test_id) {
 	    return function (dispatch) {
-	        dispatch(getDataStart());
+	        dispatch(getTestStart());
 	        var url = target + '/klmanager/getTestStatus';
 	        return _NetUtil2.default.post(url, { test_id: test_id }, function (json) {
 	            dispatch(getTestStatusSuccess(json, test_id));
+	        }, function (errors) {
+	            console.log(errors);
+	        });
+	    };
+	};
+
+	var getTestRankingList = exports.getTestRankingList = function getTestRankingList(test_id) {
+	    return function (dispatch) {
+	        dispatch(getTestStart());
+	        var url = target + '/klmanager/getTestRankingList';
+	        return _NetUtil2.default.post(url, { test_id: test_id }, function (json) {
+	            dispatch(getTestRankingListSuccess(json));
+	        }, function (errors) {
+	            console.log(errors);
+	        });
+	    };
+	};
+
+	var getStuTestInfo = exports.getStuTestInfo = function getStuTestInfo(student_id, test_id) {
+	    return function (dispatch) {
+	        var url = target + '/klmanager/getStuTestInfo';
+	        return _NetUtil2.default.post(url, { student_id: student_id, test_id: test_id }, function (json) {
+	            dispatch(getStuTestInfoSuccess(json));
 	        }, function (errors) {
 	            console.log(errors);
 	        });
@@ -60326,20 +60385,6 @@ webpackJsonp([0],[
 	var Item = _list2.default.Item;
 	var Brief = Item.Brief;
 
-	function compare(property) {
-	  //用于排序--降序
-	  return function (a, b) {
-	    return b[property] - a[property];
-	  };
-	}
-
-	function compareRise(property) {
-	  //用于排序--升序
-	  return function (a, b) {
-	    return a[property] - b[property];
-	  };
-	}
-
 	var TestStatus = function (_React$Component) {
 	  _inherits(TestStatus, _React$Component);
 
@@ -60357,8 +60402,11 @@ webpackJsonp([0],[
 	          params = _props.params;
 
 	      var test_id = params.test_id;
+	      console.log("student_id params:" + student_id + ' ' + params);
 	      if (test_id) {
 	        this.props.getTestStatus(student_id, test_id);
+	        this.props.getTestRankingList(test_id);
+	        this.props.getStuTestInfo(student_id, test_id);
 	      } else {
 	        alert("页面参数错误");
 	      }
@@ -60367,33 +60415,39 @@ webpackJsonp([0],[
 	    key: 'renderRanking',
 	    value: function renderRanking() {
 	      var ranking_list = this.props.ranking_list;
+	      // ranking_list = [
+	      //   {
+	      //     student_name: 'levin',
+	      //     correct_exercise: 2,
+	      //     test_time: '10:05',
+	      //   },
+	      //   {
+	      //     student_name: 'fly',
+	      //     correct_exercise: 1,
+	      //     test_time: '07:20',
+	      //   },
+	      //   {
+	      //     student_name: 'leaf',
+	      //     correct_exercise:1,
+	      //     test_time: '06:01',
+	      //   },
+	      //   {
+	      //     student_name: 'leaf',
+	      //     correct_exercise:1,
+	      //     test_time: '06:01',
+	      //   },
+	      //   {
+	      //     student_name: 'leaf',
+	      //     correct_exercise:3,
+	      //     test_time: '06:01',
+	      //   },
+	      //   {
+	      //     student_name: 'leaf',
+	      //     correct_exercise:5,
+	      //     test_time: '06:01',
+	      //   }
+	      // ];
 
-	      ranking_list = [{
-	        student_name: 'levin',
-	        correct: 2,
-	        test_time: '10:05'
-	      }, {
-	        student_name: 'fly',
-	        correct: 1,
-	        test_time: '07:20'
-	      }, {
-	        student_name: 'leaf',
-	        correct: 1,
-	        test_time: '06:01'
-	      }, {
-	        student_name: 'leaf',
-	        correct: 1,
-	        test_time: '06:01'
-	      }, {
-	        student_name: 'leaf',
-	        correct: 3,
-	        test_time: '06:01'
-	      }, {
-	        student_name: 'leaf',
-	        correct: 5,
-	        test_time: '06:01'
-	      }];
-	      ranking_list.sort(compare('correct'));
 	      return _react2.default.createElement(
 	        _list2.default,
 	        { renderHeader: '\u6D4B\u8BD5\u6392\u884C\u699C' },
@@ -60405,13 +60459,14 @@ webpackJsonp([0],[
 	                'div',
 	                null,
 	                _react2.default.createElement(_icon2.default, { type: 'check' }),
-	                item.correct
+	                item.correct_exercise
 	              ) },
 	            item.student_name,
 	            _react2.default.createElement(
 	              Brief,
 	              null,
-	              item.test_time
+	              item.test_time,
+	              'min'
 	            )
 	          );
 	        })
@@ -60426,13 +60481,15 @@ webpackJsonp([0],[
 	          isFetching = _props2.isFetching,
 	          isFinish = _props2.isFinish,
 	          test_id = _props2.test_id,
-	          test_status = _props2.test_status;
+	          test_status = _props2.test_status,
+	          student_id = _props2.student_id;
+
+	      console.log("student_id again:" + student_id);
 	      //TO-DO
 	      // isFinish = false;
-
 	      var buttonStr = isFinish ? '测试记录' : '进入测试';
-	      test_status.avg_accurracy = 30;
-	      test_status.test_size = 16;
+	      // test_status.avg_accurracy = 30;
+	      // test_status.test_size = 16;
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -60583,7 +60640,7 @@ webpackJsonp([0],[
 	                onClick: isFinish ? function (e) {
 	                  return _this2.props.router.push("/mobile-test/TestResult/" + test_id);
 	                } : function (e) {
-	                  return _this2.props.getTestData('1', test_id);
+	                  return _this2.props.getTestData(student_id, test_id);
 	                } },
 	              buttonStr
 	            )
@@ -60603,7 +60660,8 @@ webpackJsonp([0],[
 	      isFinish = test_state.isFinish,
 	      modalOpen = test_state.modalOpen,
 	      test_status = test_state.test_status,
-	      ranking_list = test_state.ranking_list;
+	      ranking_list = test_state.ranking_list,
+	      student_rating = test_state.student_rating;
 
 	  var default_status = {
 	    avg_accuracy: 0,
@@ -60617,6 +60675,7 @@ webpackJsonp([0],[
 	    isFetching: isFetching,
 	    modalOpen: modalOpen,
 	    isFinish: isFinish,
+	    student_rating: student_rating,
 	    test_status: test_status ? test_status : default_status,
 	    ranking_list: ranking_list ? ranking_list : [],
 	    test_id: test_id,
@@ -67416,7 +67475,6 @@ webpackJsonp([0],[
 	    key: 'loadTest',
 	    value: function loadTest() {
 	      // var student_id = '1';
-	      console.log("student_id:" + this.props.student_id);
 	      this.props.getMyTestList(this.props.student_id);
 	    }
 	  }, {
@@ -67534,8 +67592,7 @@ webpackJsonp([0],[
 	  return {
 	    my_test_list: student_state.my_test_list,
 	    isFetching: student_state.isFetching,
-	    student_id: state.AuthData.get('userid')
-	  };
+	    student_id: "1" };
 	}, action)(MyTest);
 
 /***/ },
