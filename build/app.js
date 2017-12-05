@@ -7048,7 +7048,10 @@ webpackJsonp([0],[
 	    exercise: [{ title: '', answer: '[]', type: 0, breakdown: [] }],
 	    modalOpen: false,
 	    test_log: [{}],
+<<<<<<< HEAD
 	    ranking_list: [{}],
+=======
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	    record: { correct: 0, new_rating: 0 }
 	});
 	var defaulatStudentData = _immutable2.default.fromJS({
@@ -7144,8 +7147,26 @@ webpackJsonp([0],[
 	            var start_time = new Date();
 	            var test_log = [];
 	            for (var i = 0; i < exercise.length; i++) {
+	                var breakdown = exercise[i].breakdown;
+	                var breakdown_sn = [];
+	                for (var j = 0; j < breakdown.length; j++) {
+	                    //如果没有前置步骤的都设为0并在渲染中显示，-1代表不确定在渲染中不显示
+	                    var sn_state = breakdown[j].presn ? -1 : 0;
+	                    breakdown_sn[j] = {
+	                        sn: breakdown[j].sn,
+	                        kpid: breakdown[j].kpid,
+	                        kpname: breakdown[j].kpname,
+	                        sn_state: sn_state,
+	                        presn: breakdown[j].presn,
+	                        kp_old_rating: breakdown[j].kp_rating,
+	                        sn_old_rating: breakdown[j].sn_rating
+	                    };
+	                }
 	                test_log[i] = {
+	                    exercise_state: -1,
+	                    answer: JSON.parse(exercise[i].answer),
 	                    start_time: start_time,
+	                    breakdown_sn: breakdown_sn,
 	                    ac_time: 0
 	                };
 	            }
@@ -7179,6 +7200,8 @@ webpackJsonp([0],[
 	            });
 	        case 'UPDATE_FINISH_TIME':
 	            return state.set("finish_time", new Date());
+	        case 'DISPLAY_ANSWER_TEST':
+	            return state.set("answerTestDisplay", 1);
 	        case 'CLOSE_MODAL':
 	            return state.set('modalOpen', false);
 	        case 'SUBMIT_EXERCISE_LOG':
@@ -7196,6 +7219,24 @@ webpackJsonp([0],[
 	        // if(combo_correct > combo_max){
 	        //     combo_correct 
 	        // }
+	        case 'EXERCISE_SELECT_CHANGE':
+	            return state.updateIn(['test_log', action.exindex, 'answer', action.index, 'select'], function (select) {
+	                return !select;
+	            });
+	        case 'BREAKDOWN_SN_SELECT_CHANGE':
+	            var val = action.index;
+
+	            var breakdown_sn = state.getIn(['test_log', action.exindex, 'breakdown_sn']).toJS();
+	            console.log(val, breakdown_sn);
+	            breakdown_sn[val].sn_state = breakdown_sn[val].sn_state ? 0 : 1;
+	            //取消选择，将以这步作为前置的步骤全部设为不确定-1并不渲染显示
+	            for (var i = 0; i < breakdown_sn.length; i++) {
+	                if (breakdown_sn[i].presn == breakdown_sn[val].sn) {
+	                    //如果选择则把二级知识点设置为0，如果取消选择则把二级知识点设置为-1
+	                    breakdown_sn[i].sn_state = breakdown_sn[val].sn_state ? 0 : -1;
+	                }
+	            }
+	            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], _immutable2.default.fromJS(breakdown_sn));
 	        case 'SUBMIT_FEEDBACK':
 	            return state.setIn(['test_log', action.exindex, 'breakdown_sn'], _immutable2.default.fromJS(action.breakdown_sn)).set('modalOpen', true);
 	        case 'SUBMIT_TEST_START':
@@ -12519,6 +12560,27 @@ webpackJsonp([0],[
 	    var _this = _possibleConstructorReturn(this, (Question.__proto__ || Object.getPrototypeOf(Question)).call(this, props));
 
 	    _this.onSelectChange = _this.onSelectChange.bind(_this);
+
+	    var _this$props = _this.props,
+	        exercise = _this$props.exercise,
+	        exindex = _this$props.exindex;
+
+	    var breakdown = exercise[exindex];
+	    var breakdown_sn = [];
+	    for (var i = 0; i < breakdown.length; i++) {
+	      //如果没有前置步骤的都设为0并在渲染中显示，-1代表不确定在渲染中不显示
+	      var sn_state = breakdown[i].presn ? -1 : 0;
+	      breakdown_sn[i] = {
+	        sn: breakdown[i].sn,
+	        kpid: breakdown[i].kpid,
+	        kpname: breakdown[i].kpname,
+	        sn_state: sn_state,
+	        presn: breakdown[i].presn,
+	        kp_old_rating: breakdown[i].kp_rating,
+	        sn_old_rating: breakdown[i].sn_rating
+	      };
+	    }
+	    _this.breakdown_sn = breakdown_sn;
 	    return _this;
 	  }
 
@@ -12661,12 +12723,10 @@ webpackJsonp([0],[
 	          exercise.map(function (item, i) {
 	            return test_log[i].delta_student_rating ? _react2.default.createElement(
 	              _list2.default.Item,
-	              { extra: _react2.default.createElement(_icon2.default, { type: test_log[i].exercise_state ? 'check' : 'cross' }), key: i },
-	              _react2.default.createElement(
-	                'span',
-	                { style: { color: "#CCC" } },
-	                i + 1
-	              )
+	              { onClick: function onClick(e) {
+	                  return _this2.jumpToExercise(e, i);
+	                }, extra: _react2.default.createElement(_icon2.default, { type: test_log[i].exercise_state ? 'check' : 'cross' }), key: i },
+	              i + 1
 	            ) : _react2.default.createElement(
 	              _list2.default.Item,
 	              { arrow: 'horizontal', onClick: function onClick(e) {
@@ -12713,10 +12773,21 @@ webpackJsonp([0],[
 	          exercise = _props4.exercise,
 	          exindex = _props4.exindex,
 	          test_log = _props4.test_log;
+<<<<<<< HEAD
 	      var _exercise$exindex2 = exercise[exindex],
 	          exercise_type = _exercise$exindex2.exercise_type,
 	          answer = _exercise$exindex2.answer;
 	      var user_answer = test_log[exindex].user_answer;
+=======
+	      var exercise_type = exercise[exindex].exercise_type;
+
+	      console.log(test_log);
+	      var _test_log$exindex = test_log[exindex],
+	          answer = _test_log$exindex.answer,
+	          exercise_state = _test_log$exindex.exercise_state;
+
+	      console.log(answer);
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 
 	      console.log(answer);
 	      var answerJson = JSON.parse(answer);
@@ -12727,20 +12798,79 @@ webpackJsonp([0],[
 	              return _this3.onInputChange(v);
 	            } });
 	        case 1:
+<<<<<<< HEAD
 	          //选择题
 	          return _react2.default.createElement(
 	            _list2.default,
 	            { key: 'answer' + exindex },
 	            answerJson.map(function (i, index) {
+=======
+	          //文字选择题
+	          //已做完
+	          if (exercise_state >= 0) {
+	            return _react2.default.createElement(
+	              _list2.default,
+	              { key: 'answer' + exindex },
+	              answer.map(function (i, index) {
+	                return _react2.default.createElement(
+	                  CheckboxItem,
+	                  { key: index, disabled: true, defaultChecked: i.select,
+	                    onChange: function onChange() {
+	                      return _this3.props.selectChange(exindex, index);
+	                    }, wrap: true },
+	                  _react2.default.createElement(_renderer2.default, { content: i.value })
+	                );
+	              })
+	            );
+	          }
+	          //未做完
+	          return _react2.default.createElement(
+	            _list2.default,
+	            { key: 'answer' + exindex },
+	            answer.map(function (i, index) {
 	              return _react2.default.createElement(
 	                CheckboxItem,
-	                { key: index, onChange: function onChange() {
-	                    return _this3.onSelectChange(index);
+	                { key: index, defaultChecked: i.select,
+	                  onChange: function onChange() {
+	                    return _this3.props.selectChange(exindex, index);
 	                  }, wrap: true },
 	                _react2.default.createElement(_renderer2.default, { content: i.value })
 	              );
 	            })
 	          );
+	        case 2:
+	          if (exercise_state >= 0) {
+	            return _react2.default.createElement(
+	              _list2.default,
+	              { key: 'answer' + exindex },
+	              answer.map(function (i, index) {
+	                return _react2.default.createElement(
+	                  CheckboxItem,
+	                  { key: index, disabled: true, defaultChecked: i.select,
+	                    onChange: function onChange() {
+	                      return _this3.props.selectChange(exindex, index);
+	                    }, wrap: true },
+	                  _react2.default.createElement('img', { src: i.url, style: { height: "1rem", width: "auto" } })
+	                );
+	              })
+	            );
+	          }
+	          return _react2.default.createElement(
+	            _list2.default,
+	            { key: 'answer' + exindex },
+	            answer.map(function (i, index) {
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
+	              return _react2.default.createElement(
+	                CheckboxItem,
+	                { key: index, defaultChecked: i.select,
+	                  onChange: function onChange() {
+	                    return _this3.props.selectChange(exindex, index);
+	                  }, wrap: true },
+	                _react2.default.createElement('img', { src: i.url, style: { height: "1rem", width: "auto" } })
+	              );
+	            })
+	          );
+<<<<<<< HEAD
 	        case 2:
 	          return _react2.default.createElement(
 	            _list2.default,
@@ -12755,6 +12885,8 @@ webpackJsonp([0],[
 	              );
 	            })
 	          );
+=======
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	        default:
 	          return;
 	      }
@@ -12803,14 +12935,54 @@ webpackJsonp([0],[
 	      );
 	    }
 	  }, {
-	    key: 'render',
-	    value: function render() {
+	    key: 'renderBreakdown',
+	    value: function renderBreakdown() {
 	      var _this5 = this;
 
 	      var _props6 = this.props,
 	          exercise = _props6.exercise,
 	          exindex = _props6.exindex,
-	          record = _props6.record;
+	          answerTestDisplay = _props6.answerTestDisplay,
+	          test_log = _props6.test_log;
+	      var _exercise$exindex2 = exercise[exindex],
+	          breakdown = _exercise$exindex2.breakdown,
+	          title = _exercise$exindex2.title;
+
+
+	      if (answerTestDisplay) {
+	        console.log(exercise[exindex]);
+	        var breakdown_sn = test_log[exindex].breakdown_sn;
+
+	        return _react2.default.createElement(
+	          _list2.default,
+	          { renderHeader: '\u8BF7\u9009\u62E9\u4F60\u505A\u5BF9\u7684\u6B65\u9AA4' },
+	          breakdown.map(function (item, i) {
+	            console.log(breakdown_sn[i].sn_state);
+	            var presn = item.presn;
+	            //显示第一个或前置已经被选择（最后答案不显示）
+	            if (i != breakdown.length - 1 && (breakdown_sn[i].sn_state >= 0 || presn > 0 && breakdown_sn[presn - 1].sn_state > 0)) {
+	              return _react2.default.createElement(
+	                CheckboxItem,
+	                { key: item.sn, check: breakdown_sn[i].sn_state, onChange: function onChange() {
+	                    return _this5.props.breakdownSelectChange(exindex, i);
+	                  }, wrap: true },
+	                _react2.default.createElement(_renderer2.default, { content: item.content })
+	              );
+	            }
+	          })
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this6 = this;
+
+	      var _props7 = this.props,
+	          exercise = _props7.exercise,
+	          exindex = _props7.exindex,
+	          test_log = _props7.test_log,
+	          record = _props7.record;
 
 	      console.log(exindex);
 	      var _exercise$exindex3 = exercise[exindex],
@@ -12844,7 +13016,7 @@ webpackJsonp([0],[
 	          rightContent: [_react2.default.createElement(
 	            _button2.default,
 	            { inline: true, type: 'ghost', size: 'small', onClick: function onClick(e) {
-	                return _this5.onPopup(e);
+	                return _this6.onPopup(e);
 	              } },
 	            exindex + 1
 	          )]
@@ -12852,6 +13024,7 @@ webpackJsonp([0],[
 	        _react2.default.createElement(
 	          _wingBlank2.default,
 	          null,
+	          this.renderBreakdown(),
 	          _react2.default.createElement(
 	            'div',
 	            { style: { margin: '30px 0 18px 0', fontSize: '0.3rem' } },
@@ -12887,9 +13060,9 @@ webpackJsonp([0],[
 	          ),
 	          _react2.default.createElement(
 	            _button2.default,
-	            { style: { float: 'left', margin: '0.2rem 0 0 0' },
+	            { style: { float: 'left', margin: '0.2rem 0 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
 	              onClick: function onClick(e) {
-	                return _this5.props.submitExerciseLog(exercise[exindex], _this5.userAnswer);
+	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer);
 	              },
 	              type: 'primary', inline: true },
 	            'Submit'
@@ -12912,7 +13085,8 @@ webpackJsonp([0],[
 	      modalOpen = test_state.modalOpen,
 	      record = test_state.record,
 	      exercise_st = test_state.exercise_st,
-	      start_time = test_state.start_time;
+	      start_time = test_state.start_time,
+	      answerTestDisplay = test_state.answerTestDisplay;
 
 	  return {
 	    //整个测试以同一个开始时间
@@ -12923,7 +13097,8 @@ webpackJsonp([0],[
 	    exindex: exindex,
 	    test_log: test_log,
 	    modalOpen: modalOpen,
-	    record: record
+	    record: record,
+	    answerTestDisplay: answerTestDisplay
 	  };
 	}, action)(Question);
 
@@ -55155,7 +55330,11 @@ webpackJsonp([0],[
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+<<<<<<< HEAD
 	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
+=======
+	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.breakdownSelectChange = exports.selectChange = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.displayAnswerTest = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 
 	var _NetUtil = __webpack_require__(643);
 
@@ -55427,6 +55606,7 @@ webpackJsonp([0],[
 	//获取指定测试的数据
 	var getTestData = exports.getTestData = function getTestData(student_id, test_id) {
 	    var url = target + '/klmanager/getExerciseByTest';
+	    console.log(student_id, test_id);
 	    return function (dispatch) {
 	        dispatch(getTestStart());
 	        return _NetUtil2.default.get(url, { test_id: test_id, student_id: student_id }, function (json) {
@@ -55478,7 +55658,11 @@ webpackJsonp([0],[
 	    };
 	};
 
-	var jumpNext = exports.jumpNext = function jumpNext(isQ) {
+	/**
+	 * 提交后跳转到下一题
+	 * @param  {Boolean} isQ [true:题目页面跳转/false:导学页面跳转]
+	 */
+	var jumpNext = exports.jumpNext = function jumpNext(answerTestDisplay) {
 	    return function (dispatch, getState) {
 	        var testData = getState().testData;
 	        var exindex = testData.get("exindex");
@@ -55486,47 +55670,62 @@ webpackJsonp([0],[
 	        var exercise = testData.get("exercise").toJS();
 	        var exercise_state = test_log[exindex].exercise_state;
 	        var blength = exercise[exindex].breakdown.length;
-	        var next = -1;
-	        for (var i = 0; i < exercise.length; i++) {
-	            if (!test_log[i].delta_student_rating) {
-	                next = i;
-	                break;
+	        if (!answerTestDisplay || exercise_state || blength == 1) {
+	            var next = -1;
+	            var i = exindex + 1;
+	            while (i != exindex) {
+	                if (test_log[i].exercise_state < 0) {
+	                    next = i;
+	                    break;
+	                }
+	                i = ++i % exercise.length;
 	            }
-	        }
-	        if (!isQ || exercise_state || blength == 1) {
 	            //还有未完成的题目
 	            if (next >= 0) {
 	                console.log('update');
 	                dispatch(closeModal());
 	                dispatch(updateExindex(next));
 	                dispatch(updateExerciseST());
-	                dispatch((0, _reactRouterRedux.push)("/mobile-test/Question"));
-	            } else {
-	                //全部完成
-	                console.log("submit");
-	                //测试完成，提交数据
-	                dispatch(updateFinishTime());
-
-	                var _getState = getState(),
-	                    _testData = _getState.testData;
-
-	                var test_state = _testData.toJS();
-	                console.log(test_state);
-	                dispatch(submitTestStart());
-	                var url = target + '/klmanager/submitTest';
-	                return _NetUtil2.default.post(url, { student_id: '1', student_rating: 500, test_result: test_state }, function (json) {
-	                    console.log(json);
-	                    dispatch(submitTestSuccess(json));
-	                    dispatch((0, _reactRouterRedux.push)("/mobile-test/kpTestResult"));
-	                }, function (errors) {
-	                    console.log(errors);
-	                });
+	                //dispatch(push("/mobile-test/Question"));
 	            }
+	            //题目全部完成
+	            else {
+	                    //测试完成，记录测试结束时间
+	                    dispatch(updateFinishTime());
+	                    var _testData = getState().testData.toJS();
+	                    console.log(_testData);
+	                    dispatch(submitTestStart());
+	                    var url = target + '/klmanager/submitTest';
+
+	                    /**
+	                     * [提交后台测试数据]
+	                     */
+	                    var test_result = {
+	                        test_id: _testData.test_id,
+	                        test_log: _testData.test_log,
+	                        start_time: _testData.start_time,
+	                        finish_time: _testData.finish_time
+	                    };
+	                    return _NetUtil2.default.post(url, { student_id: '1', student_rating: 500, test_result: test_result }, function (json) {
+	                        console.log(json);
+	                        dispatch(submitTestSuccess(json));
+	                        dispatch((0, _reactRouterRedux.push)("/mobile-test/kpTestResult"));
+	                    }, function (errors) {
+	                        console.log(errors);
+	                    });
+	                }
 	        } else {
 	            console.log('jump');
 	            dispatch(closeModal());
-	            dispatch((0, _reactRouterRedux.push)("/mobile-test/AnswerTest"));
+	            dispatch(displayAnswerTest());
+	            //dispatch(push("/mobile-test/AnswerTest"));
 	        }
+	    };
+	};
+
+	var displayAnswerTest = exports.displayAnswerTest = function displayAnswerTest() {
+	    return {
+	        type: 'DISPLAY_ANSWER_TEST'
 	    };
 	};
 
@@ -55589,7 +55788,7 @@ webpackJsonp([0],[
 	    };
 	};
 
-	var checkAnswer = function checkAnswer(exercise_type, exAnswer, userAnswer) {
+	var checkAnswer = function checkAnswer(exercise_type, log_answer) {
 	    var result = 1;
 	    switch (exercise_type) {
 	        case 0:
@@ -55612,15 +55811,21 @@ webpackJsonp([0],[
 	            }
 	            break;
 	        case 1:
-	            var xornum = [1, 2, 4, 8];
-	            var checkAnswer = 0;
-	            for (var i = 0; i < exAnswer.length; i++) {
-	                if (exAnswer[i].correct) checkAnswer += xornum[i];
+	            for (var i = 0; i < log_answer.length; i++) {
+	                if (log_answer[i].correct != log_answer[i].select) {
+	                    return 0;
+	                }
 	            }
-	            //选择题
-	            if (userAnswer != exAnswer) {
-	                result = 0;
-	            }
+	            // const xornum = [1, 2, 4, 8];
+	            // var checkAnswer = 0;
+	            // for(var i = 0; i < exAnswer.length; i++){
+	            //     if(exAnswer[i].correct)
+	            //     checkAnswer += xornum[i];
+	            // }
+	            // //选择题
+	            // if(userAnswer != exAnswer){
+	            //     result = 0;
+	            // }
 	            break;
 	        default:
 	            break;
@@ -55629,19 +55834,38 @@ webpackJsonp([0],[
 	};
 
 	/**
+	 * [修改题目选项]
+	 */
+	var selectChange = exports.selectChange = function selectChange(exindex, index) {
+	    return {
+	        type: 'EXERCISE_SELECT_CHANGE',
+	        exindex: exindex,
+	        index: index
+	    };
+	};
+
+	/**
+	 * [修改反馈选项]
+	 */
+	var breakdownSelectChange = exports.breakdownSelectChange = function breakdownSelectChange(exindex, index) {
+	    return {
+	        type: 'BREAKDOWN_SN_SELECT_CHANGE',
+	        exindex: exindex,
+	        index: index
+	    };
+	};
+
+	/**
 	 * [提交单题测试结果]
 	 */
-	var submitExerciseLog = exports.submitExerciseLog = function submitExerciseLog(exercise, userAnswer, ac_time, student_rating) {
-	    console.log(userAnswer);
+	var submitExerciseLog = exports.submitExerciseLog = function submitExerciseLog(exercise, log_answer, student_rating) {
 	    var exercise_id = exercise.exercise_id,
 	        answer = exercise.answer,
 	        exercise_type = exercise.exercise_type,
 	        exercise_rating = exercise.exercise_rating,
 	        breakdown = exercise.breakdown;
 
-	    console.log(answer);
-	    var result = checkAnswer(exercise_type, answer, userAnswer);
-
+	    var result = checkAnswer(exercise_type, log_answer);
 	    student_rating = 500;
 
 	    //计算学生、题目得分
@@ -55657,13 +55881,15 @@ webpackJsonp([0],[
 	        exercise_id: exercise_id,
 	        exercise_state: result,
 	        submit_time: new Date(),
+<<<<<<< HEAD
 	        //原题答案
 	        exercise_answer: answer,
 	        //用户答案
 	        user_answer: userAnswer,
+=======
+>>>>>>> 6f82cf01d34b9a23d0cf6416b8ad73047f44a792
 	        delta_exercise_rating: Math.ceil(K * (ex_SA - ex_delta)),
-	        delta_student_rating: Math.ceil(K * (st_SA - st_delta)),
-	        breakdown_sn: breakdown_sn
+	        delta_student_rating: Math.ceil(K * (st_SA - st_delta))
 	    };
 	    if (result) {
 	        for (var i = 0; i < breakdown.length; i++) {
@@ -57550,7 +57776,8 @@ webpackJsonp([0],[
 	});
 
 	var config = {
-	  server_url: "http://39.108.85.119:3000"
+	  // server_url: "http://39.108.85.119:3000",
+	  server_url: "http://127.0.0.1:3000"
 	};
 	//配置常用参数
 	exports.default = config;
@@ -67486,13 +67713,6 @@ webpackJsonp([0],[
 	    key: 'handleTabClick',
 	    value: function handleTabClick(key) {
 	      console.log('onTabClick', key);
-	    }
-	  }, {
-	    key: 'onStart',
-	    value: function onStart(e, test_id) {
-	      console.log(test_id);
-	      this.props.getTestData(test_id);
-	      // this.props.history.push("/mobile-test/Question");
 	    }
 	  }, {
 	    key: 'render',
