@@ -312,7 +312,7 @@ export const jumpToExercise = (exercise_id) => {
     }
 }
 
-export const submitFeedBack = (exindex, breakdown_sn) => {
+export const submitFeedBack = (exindex) => {
     return {
         type: 'SUBMIT_FEEDBACK',
         exindex,
@@ -321,9 +321,9 @@ export const submitFeedBack = (exindex, breakdown_sn) => {
 
 /**
  * 提交后跳转到下一题
- * @param  {Boolean} isQ [true:题目页面跳转/false:导学页面跳转]
+ * @param  {Boolean} answerTestDisplay [true:题目页面跳转/false:导学页面跳转]
  */
-export const jumpNext = (answerTestDisplay) => {
+export const jumpNext = (answer_test) => {
     return (dispatch, getState) => {
         const testData = getState().testData;
         const exindex = testData.get("exindex");
@@ -331,7 +331,7 @@ export const jumpNext = (answerTestDisplay) => {
         const exercise = testData.get("exercise").toJS();
         const exercise_state = test_log[exindex].exercise_state;
         const blength = exercise[exindex].breakdown.length;
-        if(!answerTestDisplay || exercise_state || blength == 1){
+        if(!answer_test || exercise_state || blength == 1){
             var next = -1;
             var i = exindex + 1;
             while(i != exindex){
@@ -378,15 +378,16 @@ export const jumpNext = (answerTestDisplay) => {
         }else{
             console.log('jump');
             dispatch(closeModal());
-            dispatch(displayAnswerTest());
+            dispatch(updateAnswerTest(exindex, 1));
             //dispatch(push("/mobile-test/AnswerTest"));
         }
     }
 }
 
-export const displayAnswerTest = () => {
+export const updateAnswerTest = (exindex, answer_test) => {
     return {
-        type: 'DISPLAY_ANSWER_TEST',
+        type: 'UPDATE_ANSWER_TEST',
+        answer_test: answer_test,
     }
 }
 
