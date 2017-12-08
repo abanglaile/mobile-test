@@ -272,10 +272,10 @@ class Question extends React.Component {
   }
 
   renderBreakdown(){
-    const {exercise, exindex, answerTestDisplay, test_log} = this.props;
+    const {exercise, exindex, test_log} = this.props;
     const {breakdown, title} = exercise[exindex];
     
-    if(answerTestDisplay){
+    if(test_log[exindex].answer_test){
       var {breakdown_sn} = test_log[exindex];
       return (
       <List renderHeader='请选择你做对的步骤'>
@@ -296,6 +296,51 @@ class Question extends React.Component {
     }
     
     
+  }
+
+  renderFooter(){
+    const {exindex, test_log} = this.props;
+    if(test_log[exindex].answer_test){
+      return (
+        <div style={{
+                  display: 'flex',
+                  position: 'fixed',
+                  bottom: '0',
+                  width: '100%',
+                  height: "1.2rem",
+                  borderTop: "solid 1px #CCC",
+                  }}>
+              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+                onClick={e => this.props.submitFeedBack(exindex)} 
+                type="primary" inline>
+              提交反馈
+              </Button>
+        </div>
+      )  
+    }else if(exercise_state < 0){
+      return (
+          <div style={{
+                  display: 'flex',
+                  position: 'fixed',
+                  bottom: '0',
+                  width: '100%',
+                  height: "1.2rem",
+                  borderTop: "solid 1px #CCC",
+                  }}>
+              <div style={{float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%"}}>
+                <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
+                <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
+              </div>
+              <Button type="primary">上一题</Button>
+              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+                onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
+                type="primary" inline>
+              提交答案
+              </Button>
+              <Button type="primary">下一题</Button>
+          </div>
+      )
+    }
   }
 
   render() {
@@ -335,24 +380,7 @@ class Question extends React.Component {
       </div>
       </WingBlank>
       {this.renderAnswer()}
-      <div style={{
-            display: 'flex',
-            position: 'fixed',
-            bottom: '0',
-            width: '100%',
-            height: "1.2rem",
-            borderTop: "solid 1px #CCC",
-            }}>
-          <div style={{float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%"}}>
-            <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
-            <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
-          </div>
-          <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
-            onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
-            type="primary" inline>
-          Submit
-          </Button>
-      </div>
+      {this.renderFooter()}
       {this.renderModal()}
     </div>
     
@@ -363,7 +391,7 @@ class Question extends React.Component {
 export default connect(state => {
   const test_state = state.testData.toJS();
   console.log(test_state);
-  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answerTestDisplay} = test_state;
+  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test} = test_state;
   return {
     //整个测试以同一个开始时间
     start_time: start_time,
@@ -374,6 +402,6 @@ export default connect(state => {
     test_log: test_log,
     modalOpen: modalOpen,
     record: record,
-    answerTestDisplay: answerTestDisplay,
+    answer_test: answer_test,
   }; 
 }, action)(Question);

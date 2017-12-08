@@ -7197,8 +7197,8 @@ webpackJsonp([0],[
 	            });
 	        case 'UPDATE_FINISH_TIME':
 	            return state.set("finish_time", new Date());
-	        case 'DISPLAY_ANSWER_TEST':
-	            return state.set("answerTestDisplay", 1);
+	        case 'UPDATE_ANSWER_TEST':
+	            return state.setIn(["test_log", action.exindex], action.answer_test);
 	        case 'CLOSE_MODAL':
 	            return state.set('modalOpen', false);
 	        case 'SUBMIT_EXERCISE_LOG':
@@ -12456,21 +12456,21 @@ webpackJsonp([0],[
 
 	var _css = __webpack_require__(271);
 
-	var _progress = __webpack_require__(281);
-
-	var _progress2 = _interopRequireDefault(_progress);
-
-	var _css2 = __webpack_require__(365);
-
-	var _wingBlank = __webpack_require__(368);
+	var _wingBlank = __webpack_require__(281);
 
 	var _wingBlank2 = _interopRequireDefault(_wingBlank);
 
-	var _css3 = __webpack_require__(369);
+	var _css2 = __webpack_require__(365);
 
-	var _navBar = __webpack_require__(375);
+	var _navBar = __webpack_require__(371);
 
 	var _navBar2 = _interopRequireDefault(_navBar);
+
+	var _css3 = __webpack_require__(401);
+
+	var _progress = __webpack_require__(404);
+
+	var _progress2 = _interopRequireDefault(_progress);
 
 	var _css4 = __webpack_require__(405);
 
@@ -12478,9 +12478,9 @@ webpackJsonp([0],[
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _css5 = __webpack_require__(370);
+	var _css5 = __webpack_require__(366);
 
-	var _icon = __webpack_require__(381);
+	var _icon = __webpack_require__(377);
 
 	var _icon2 = _interopRequireDefault(_icon);
 
@@ -12905,14 +12905,13 @@ webpackJsonp([0],[
 	      var _props6 = this.props,
 	          exercise = _props6.exercise,
 	          exindex = _props6.exindex,
-	          answerTestDisplay = _props6.answerTestDisplay,
 	          test_log = _props6.test_log;
 	      var _exercise$exindex2 = exercise[exindex],
 	          breakdown = _exercise$exindex2.breakdown,
 	          title = _exercise$exindex2.title;
 
 
-	      if (answerTestDisplay) {
+	      if (test_log[exindex].answer_test) {
 	        var breakdown_sn = test_log[exindex].breakdown_sn;
 
 	        return _react2.default.createElement(
@@ -12936,15 +12935,84 @@ webpackJsonp([0],[
 	      }
 	    }
 	  }, {
-	    key: 'render',
-	    value: function render() {
+	    key: 'renderFooter',
+	    value: function renderFooter() {
 	      var _this6 = this;
 
 	      var _props7 = this.props,
-	          exercise = _props7.exercise,
 	          exindex = _props7.exindex,
-	          test_log = _props7.test_log,
-	          record = _props7.record;
+	          test_log = _props7.test_log;
+
+	      if (test_log[exindex].answer_test) {
+	        return _react2.default.createElement(
+	          'div',
+	          { style: {
+	              display: 'flex',
+	              position: 'fixed',
+	              bottom: '0',
+	              width: '100%',
+	              height: "1.2rem",
+	              borderTop: "solid 1px #CCC"
+	            } },
+	          _react2.default.createElement(
+	            _button2.default,
+	            { style: { float: 'left', margin: '0.2rem 0 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
+	              onClick: function onClick(e) {
+	                return _this6.props.submitFeedBack(exindex);
+	              },
+	              type: 'primary', inline: true },
+	            '\u63D0\u4EA4\u53CD\u9988'
+	          )
+	        );
+	      } else if (exercise_state < 0) {
+	        return _react2.default.createElement(
+	          'div',
+	          { style: {
+	              display: 'flex',
+	              position: 'fixed',
+	              bottom: '0',
+	              width: '100%',
+	              height: "1.2rem",
+	              borderTop: "solid 1px #CCC"
+	            } },
+	          _react2.default.createElement(
+	            'div',
+	            { style: { float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%" } },
+	            _react2.default.createElement(
+	              'div',
+	              { 'aria-hidden': 'true', style: { fontSize: "0.3rem", color: "00AA00", marginBottom: "0.1rem" } },
+	              record.correct,
+	              ' / ',
+	              exercise.length
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(_progress2.default, { percent: record.correct / exercise.length * 100, position: 'normal' })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _button2.default,
+	            { style: { float: 'left', margin: '0.2rem 0 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
+	              onClick: function onClick(e) {
+	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer);
+	              },
+	              type: 'primary', inline: true },
+	            '\u63D0\u4EA4\u7B54\u6848'
+	          )
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this7 = this;
+
+	      var _props8 = this.props,
+	          exercise = _props8.exercise,
+	          exindex = _props8.exindex,
+	          test_log = _props8.test_log,
+	          record = _props8.record;
 
 	      console.log(exindex);
 	      var _exercise$exindex3 = exercise[exindex],
@@ -12978,7 +13046,7 @@ webpackJsonp([0],[
 	          rightContent: [_react2.default.createElement(
 	            _button2.default,
 	            { inline: true, type: 'ghost', size: 'small', onClick: function onClick(e) {
-	                return _this6.onPopup(e);
+	                return _this7.onPopup(e);
 	              } },
 	            exindex + 1
 	          )]
@@ -12994,42 +13062,7 @@ webpackJsonp([0],[
 	          )
 	        ),
 	        this.renderAnswer(),
-	        _react2.default.createElement(
-	          'div',
-	          { style: {
-	              display: 'flex',
-	              position: 'fixed',
-	              bottom: '0',
-	              width: '100%',
-	              height: "1.2rem",
-	              borderTop: "solid 1px #CCC"
-	            } },
-	          _react2.default.createElement(
-	            'div',
-	            { style: { float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%" } },
-	            _react2.default.createElement(
-	              'div',
-	              { 'aria-hidden': 'true', style: { fontSize: "0.3rem", color: "00AA00", marginBottom: "0.1rem" } },
-	              record.correct,
-	              ' / ',
-	              exercise.length
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              null,
-	              _react2.default.createElement(_progress2.default, { percent: record.correct / exercise.length * 100, position: 'normal' })
-	            )
-	          ),
-	          _react2.default.createElement(
-	            _button2.default,
-	            { style: { float: 'left', margin: '0.2rem 0 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
-	              onClick: function onClick(e) {
-	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer);
-	              },
-	              type: 'primary', inline: true },
-	            'Submit'
-	          )
-	        ),
+	        this.renderFooter(),
 	        this.renderModal()
 	      );
 	    }
@@ -13048,7 +13081,7 @@ webpackJsonp([0],[
 	      record = test_state.record,
 	      exercise_st = test_state.exercise_st,
 	      start_time = test_state.start_time,
-	      answerTestDisplay = test_state.answerTestDisplay;
+	      answer_test = test_state.answer_test;
 
 	  return {
 	    //整个测试以同一个开始时间
@@ -13060,7 +13093,7 @@ webpackJsonp([0],[
 	    test_log: test_log,
 	    modalOpen: modalOpen,
 	    record: record,
-	    answerTestDisplay: answerTestDisplay
+	    answer_test: answer_test
 	  };
 	}, action)(Question);
 
@@ -13501,7 +13534,7 @@ webpackJsonp([0],[
 
 
 	// module
-	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-progress-outer {\n  background-color: #ddd;\n  display: block;\n}\n.am-progress-fixed-outer {\n  position: fixed;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 2000;\n}\n.am-progress-hide-outer {\n  background-color: transparent;\n}\n.am-progress-bar {\n  border: 0.04rem solid #108ee9;\n  -webkit-transition: all 0.3s linear 0s;\n  transition: all 0.3s linear 0s;\n}\n", ""]);
+	exports.push([module.id, ".am-wingblank {\n  margin-left: 0.16rem;\n  margin-right: 0.16rem;\n}\n.am-wingblank.am-wingblank-sm {\n  margin-left: 0.1rem;\n  margin-right: 0.1rem;\n}\n.am-wingblank.am-wingblank-md {\n  margin-left: 0.16rem;\n  margin-right: 0.16rem;\n}\n.am-wingblank.am-wingblank-lg {\n  margin-left: 0.3rem;\n  margin-right: 0.3rem;\n}\n", ""]);
 
 	// exports
 
@@ -13511,41 +13544,23 @@ webpackJsonp([0],[
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
-	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
-	var _objectAssign=__webpack_require__(3);var _objectAssign2=_interopRequireDefault(_objectAssign);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
-	Progress=function(_React$Component){(0,_inherits3["default"])(Progress,_React$Component);function Progress(){(0,_classCallCheck3["default"])(this,Progress);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}Progress.prototype.
-	componentWillReceiveProps=function componentWillReceiveProps(){
-	this.noAppearTransition=true;
-	};Progress.prototype.
-	componentDidMount=function componentDidMount(){var _this2=this;
-	if(this.props.appearTransition){
-	setTimeout(function(){
-	_this2.refs.bar.style.width=_this2.props.percent+'%';
-	},10);
-	}
-	};Progress.prototype.
+	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
+	WingBlank=function(_React$Component){(0,_inherits3["default"])(WingBlank,_React$Component);function WingBlank(){(0,_classCallCheck3["default"])(this,WingBlank);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}WingBlank.prototype.
 	render=function render(){var _classNames;var _props=
-	this.props,prefixCls=_props.prefixCls,position=_props.position,unfilled=_props.unfilled,_props$style=_props.style,style=_props$style===undefined?{}:_props$style;
-	var percentStyle={
-	width:this.noAppearTransition||!this.props.appearTransition?this.props.percent+'%':0,
-	height:0};
+	this.props,prefixCls=_props.prefixCls,size=_props.size,className=_props.className,children=_props.children,style=_props.style;
+	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,''+
+	prefixCls,true),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-'+size,true),(0,_defineProperty3["default"])(_classNames,
+	className,!!className),_classNames));
 
-	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-outer',true),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-fixed-outer',position==='fixed'),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-hide-outer',unfilled==='hide'),_classNames));
+	return _react2["default"].createElement('div',{className:wrapCls,style:style},
+	children);
 
-	return _react2["default"].createElement('div',{className:wrapCls},
-	_react2["default"].createElement('div',{ref:'bar',className:prefixCls+'-bar',style:(0,_objectAssign2["default"])({},style,percentStyle)}));
+	};return WingBlank;}(_react2["default"].Component);exports["default"]=WingBlank;
 
-	};return Progress;}(_react2["default"].Component);exports["default"]=Progress;
-
-	Progress.defaultProps={
-	prefixCls:'am-progress',
-	percent:0,
-	position:'fixed',
-	unfilled:'show',
-	appearTransition:false};module.exports=exports['default'];
+	WingBlank.defaultProps={
+	prefixCls:'am-wingblank',
+	size:'lg'};module.exports=exports['default'];
 
 /***/ },
 /* 282 */
@@ -15092,92 +15107,22 @@ webpackJsonp([0],[
 
 	'use strict';__webpack_require__(272);
 	__webpack_require__(366);
+	__webpack_require__(369);
 
 /***/ },
 /* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(367);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(276)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css", function() {
-				var newContent = require("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
+	'use strict';__webpack_require__(367);
 
 /***/ },
 /* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(275)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".am-wingblank {\n  margin-left: 0.16rem;\n  margin-right: 0.16rem;\n}\n.am-wingblank.am-wingblank-sm {\n  margin-left: 0.1rem;\n  margin-right: 0.1rem;\n}\n.am-wingblank.am-wingblank-md {\n  margin-left: 0.16rem;\n  margin-right: 0.16rem;\n}\n.am-wingblank.am-wingblank-lg {\n  margin-left: 0.3rem;\n  margin-right: 0.3rem;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 368 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
-	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
-	WingBlank=function(_React$Component){(0,_inherits3["default"])(WingBlank,_React$Component);function WingBlank(){(0,_classCallCheck3["default"])(this,WingBlank);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}WingBlank.prototype.
-	render=function render(){var _classNames;var _props=
-	this.props,prefixCls=_props.prefixCls,size=_props.size,className=_props.className,children=_props.children,style=_props.style;
-	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,''+
-	prefixCls,true),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-'+size,true),(0,_defineProperty3["default"])(_classNames,
-	className,!!className),_classNames));
-
-	return _react2["default"].createElement('div',{className:wrapCls,style:style},
-	children);
-
-	};return WingBlank;}(_react2["default"].Component);exports["default"]=WingBlank;
-
-	WingBlank.defaultProps={
-	prefixCls:'am-wingblank',
-	size:'lg'};module.exports=exports['default'];
-
-/***/ },
-/* 369 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';__webpack_require__(272);
-	__webpack_require__(370);
-	__webpack_require__(373);
-
-/***/ },
-/* 370 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';__webpack_require__(371);
-
-/***/ },
-/* 371 */
-/***/ function(module, exports, __webpack_require__) {
-
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(372);
+	var content = __webpack_require__(368);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(276)(content, {});
@@ -15197,7 +15142,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 372 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(275)();
@@ -15211,13 +15156,13 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 373 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(374);
+	var content = __webpack_require__(370);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(276)(content, {});
@@ -15237,7 +15182,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 374 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(275)();
@@ -15251,10 +15196,10 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 375 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
 
 
 
@@ -15265,7 +15210,7 @@ webpackJsonp([0],[
 
 	var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
-	var _icon=__webpack_require__(381);var _icon2=_interopRequireDefault(_icon);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var __rest=undefined&&undefined.__rest||function(s,e){var t={};for(var p in s){if(Object.prototype.hasOwnProperty.call(s,p)&&e.indexOf(p)<0)t[p]=s[p];}if(s!=null&&typeof Object.getOwnPropertySymbols==="function")for(var i=0,p=Object.getOwnPropertySymbols(s);i<p.length;i++){if(e.indexOf(p[i])<0)t[p[i]]=s[p[i]];}return t;};var
+	var _icon=__webpack_require__(377);var _icon2=_interopRequireDefault(_icon);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var __rest=undefined&&undefined.__rest||function(s,e){var t={};for(var p in s){if(Object.prototype.hasOwnProperty.call(s,p)&&e.indexOf(p)<0)t[p]=s[p];}if(s!=null&&typeof Object.getOwnPropertySymbols==="function")for(var i=0,p=Object.getOwnPropertySymbols(s);i<p.length;i++){if(e.indexOf(p[i])<0)t[p[i]]=s[p[i]];}return t;};var
 	NavBar=function(_React$Component){(0,_inherits3["default"])(NavBar,_React$Component);function NavBar(){(0,_classCallCheck3["default"])(this,NavBar);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}NavBar.prototype.
 	render=function render(){var _classNames;
 	var _a=this.props,prefixCls=_a.prefixCls,className=_a.className,children=_a.children,mode=_a.mode,iconName=_a.iconName,leftContent=_a.leftContent,rightContent=_a.rightContent,onLeftClick=_a.onLeftClick,restProps=__rest(_a,["prefixCls","className","children","mode","iconName","leftContent","rightContent","onLeftClick"]);
@@ -15294,14 +15239,14 @@ webpackJsonp([0],[
 	}};module.exports=exports['default'];
 
 /***/ },
-/* 376 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	exports.__esModule = true;
 
-	var _assign = __webpack_require__(377);
+	var _assign = __webpack_require__(373);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -15322,29 +15267,29 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 377 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(378), __esModule: true };
+	module.exports = { "default": __webpack_require__(374), __esModule: true };
 
 /***/ },
-/* 378 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(379);
+	__webpack_require__(375);
 	module.exports = __webpack_require__(288).Object.assign;
 
 /***/ },
-/* 379 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.3.1 Object.assign(target, source)
 	var $export = __webpack_require__(286);
 
-	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(380)});
+	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(376)});
 
 /***/ },
-/* 380 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15382,10 +15327,10 @@ webpackJsonp([0],[
 	} : $assign;
 
 /***/ },
-/* 381 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
 
 
 
@@ -15402,7 +15347,7 @@ webpackJsonp([0],[
 	_this.renderSvg=function(){
 	var svg=void 0;
 	try{
-	svg=__webpack_require__(382)("./"+_this.props.type+'.svg');
+	svg=__webpack_require__(378)("./"+_this.props.type+'.svg');
 	}
 	catch(e){
 	}finally
@@ -15437,29 +15382,29 @@ webpackJsonp([0],[
 	size:'md'};module.exports=exports['default'];
 
 /***/ },
-/* 382 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./check-circle-o.svg": 383,
-		"./check-circle.svg": 387,
-		"./check.svg": 388,
-		"./cross-circle-o.svg": 389,
-		"./cross-circle.svg": 390,
-		"./cross.svg": 391,
-		"./down.svg": 392,
-		"./ellipsis-circle.svg": 393,
-		"./ellipsis.svg": 394,
-		"./exclamation-circle.svg": 395,
-		"./info-circle.svg": 396,
-		"./koubei-o.svg": 397,
-		"./koubei.svg": 398,
-		"./left.svg": 399,
-		"./loading.svg": 400,
-		"./question-circle.svg": 401,
-		"./right.svg": 402,
-		"./search.svg": 403,
-		"./up.svg": 404
+		"./check-circle-o.svg": 379,
+		"./check-circle.svg": 383,
+		"./check.svg": 384,
+		"./cross-circle-o.svg": 385,
+		"./cross-circle.svg": 386,
+		"./cross.svg": 387,
+		"./down.svg": 388,
+		"./ellipsis-circle.svg": 389,
+		"./ellipsis.svg": 390,
+		"./exclamation-circle.svg": 391,
+		"./info-circle.svg": 392,
+		"./koubei-o.svg": 393,
+		"./koubei.svg": 394,
+		"./left.svg": 395,
+		"./loading.svg": 396,
+		"./question-circle.svg": 397,
+		"./right.svg": 398,
+		"./search.svg": 399,
+		"./up.svg": 400
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -15472,23 +15417,23 @@ webpackJsonp([0],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 382;
+	webpackContext.id = 378;
 
 
 /***/ },
-/* 383 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
+	var sprite = __webpack_require__(380);
 	var image = "<symbol viewBox=\"0 0 48 48\" id=\"check-circle-o\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <defs/> <g id=\"check-circle-o_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"check-circle-o_step-48px-&#x5BF9;&#x52FE;\"> <path d=\"M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M24,45 C35.5979797,45 45,35.5979797 45,24 C45,12.4020203 35.5979797,3 24,3 C12.4020203,3 3,12.4020203 3,24 C3,35.5979797 12.4020203,45 24,45 Z\" id=\"check-circle-o_Combined-Shape\"/> <polygon id=\"check-circle-o_Path-3\" points=\"12.2000122 23.2000122 10 25.2999878 20 35.2000122 37.2000122 15 35 13 19.8000031 30.7999878\"/> </g> </g> </symbol>";
 	module.exports = sprite.add(image, "check-circle-o");
 
 /***/ },
-/* 384 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Sprite = __webpack_require__(385);
+	var Sprite = __webpack_require__(381);
 	var globalSprite = new Sprite();
 
 	if (document.body) {
@@ -15503,10 +15448,10 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 385 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Sniffr = __webpack_require__(386);
+	var Sniffr = __webpack_require__(382);
 
 	/**
 	 * List of SVG attributes to fix url target in them
@@ -15775,7 +15720,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 386 */
+/* 382 */
 /***/ function(module, exports) {
 
 	(function(host) {
@@ -15899,173 +15844,261 @@ webpackJsonp([0],[
 
 
 /***/ },
+/* 383 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 48 48\" id=\"check-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <defs/> <g id=\"check-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"check-circle_step-48px-&#x5BF9;&#x52FE;-&#x5B9E;&#x5FC3;\"> <path d=\"M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M13.1000061,23.2000122 L10.8999939,25.2999878 L20.8999939,35.2000122 L38.1000061,15 L35.8999939,13 L20.6999969,30.7999878 L13.1000061,23.2000122 Z\" id=\"check-circle_Combined-Shape\"/> </g> </g> </symbol>";
+	module.exports = sprite.add(image, "check-circle");
+
+/***/ },
+/* 384 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"check\" ><title>Operation Icons Copy 6</title><path d=\"M34.538 8L38 11.518 17.808 32 8 22.033l3.462-3.518 6.346 6.45z\" fill-rule=\"evenodd\"/></symbol>";
+	module.exports = sprite.add(image, "check");
+
+/***/ },
+/* 385 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 48 48\" id=\"cross-circle-o\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch --> <title>step-48-&#x9519;&#x8BEF;-&#x5B9E;&#x5FC3;</title> <desc>Created with Sketch.</desc> <defs/> <g id=\"cross-circle-o_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross-circle-o_step-48-&#x9519;&#x8BEF;-&#x5B9E;&#x5FC3;\"> <path d=\"M24,48 C37.2552,48 48,37.2552 48,24 C48,10.7448 37.2552,0 24,0 C10.7448,0 0,10.7448 0,24 C0,37.2552 10.7448,48 24,48 Z M24.3528979,22.2299765 L16.7595141,14.6369589 C15.963097,13.8383925 15.2222827,13.8154868 14.4974902,14.4296225 C13.7726977,15.0437582 13.9375537,16.0471152 14.3727954,16.496517 L22.2249682,24.343746 L14.5037158,32.0674399 C13.7781456,32.7949682 13.9458544,33.7125204 14.4392626,34.2443808 C14.9326708,34.7762412 15.9934008,34.9267538 16.7512744,34.0698813 L24.3382495,26.4858969 L31.981621,34.1089438 C32.7780381,34.9075102 33.5898974,34.8343466 34.1933347,34.2552795 C34.796772,33.6762124 34.9135187,32.812668 34.1183231,32.0153264 L26.4613005,24.346281 L34.0048754,16.8248862 C34.8162768,16.1279868 34.9043097,15.0655787 34.3015063,14.4849204 C33.3827441,13.5999106 32.4530774,14.1466814 32.0377123,14.5631674 L24.3528979,22.2299765 Z\" id=\"cross-circle-o_Combined-Shape\"/> </g> </g> </symbol>";
+	module.exports = sprite.add(image, "cross-circle-o");
+
+/***/ },
+/* 386 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 48 48\" id=\"cross-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <defs/> <g id=\"cross-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross-circle_step-48-&#x9519;&#x8BEF;\"> <path d=\"M24,48 C37.2552,48 48,37.2552 48,24 C48,10.7448 37.2552,0 24,0 C10.7448,0 0,10.7448 0,24 C0,37.2552 10.7448,48 24,48 Z M24,45 C35.5983,45 45,35.5983 45,24 C45,12.4017 35.5983,3 24,3 C12.4017,3 3,12.4017 3,24 C3,35.5983 12.4017,45 24,45 Z\" id=\"cross-circle_Combined-Shape\"/> <path d=\"M24.3392549,22.2189068 L16.5648998,14.4445518 C15.9703079,13.8499598 15.0255464,13.8549458 14.43976,14.4407322 C13.8498895,15.0306027 13.8556836,15.9779762 14.4435795,16.5658721 L22.2179346,24.3402272 L14.4435795,32.1145823 C13.8556836,32.7024782 13.8498895,33.6498517 14.43976,34.2397221 C15.0255464,34.8255086 15.9703079,34.8304945 16.5648998,34.2359026 L24.3392549,26.4615475 L32.11361,34.2359026 C32.7082019,34.8304945 33.6529634,34.8255086 34.2387498,34.2397221 C34.8286203,33.6498517 34.8228262,32.7024782 34.2349303,32.1145823 L26.4605753,24.3402272 L34.2349303,16.5658721 C34.8228262,15.9779762 34.8286203,15.0306027 34.2387498,14.4407322 C33.6529634,13.8549458 32.7082019,13.8499598 32.11361,14.4445518 L24.3392549,22.2189068 Z\" id=\"cross-circle_Combined-Shape\"/> </g> </g> </symbol>";
+	module.exports = sprite.add(image, "cross-circle");
+
+/***/ },
 /* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 48 48\" id=\"check-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <defs/> <g id=\"check-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"check-circle_step-48px-&#x5BF9;&#x52FE;-&#x5B9E;&#x5FC3;\"> <path d=\"M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M13.1000061,23.2000122 L10.8999939,25.2999878 L20.8999939,35.2000122 L38.1000061,15 L35.8999939,13 L20.6999969,30.7999878 L13.1000061,23.2000122 Z\" id=\"check-circle_Combined-Shape\"/> </g> </g> </symbol>";
-	module.exports = sprite.add(image, "check-circle");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"cross\" > <defs/> <g id=\"cross_ALL-ICON\" stroke-rule=\"evenodd\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross_Group-15\" fill-rule=\"evenodd\" transform=\"translate(6.000000, 6.000000)\"> <rect id=\"cross_Rectangle-1643\" opacity=\"0\" x=\"0\" y=\"0\" width=\"22\" height=\"22\"/> <path d=\"M18.0084687,15.8522394 L26.9766601,6.8840479 L25.0926122,5 L16.1244208,13.9681915 L7.15622933,5 L5.27218143,6.8840479 L14.2403729,15.8522394 L5,25.0926122 L6.8840479,26.9766601 L16.1244208,17.7362872 L25.3647937,26.9766601 L27.2488416,25.0926122 L18.0084687,15.8522394 Z\" id=\"cross_Combined-Shape\"/> </g> </g> </symbol>";
+	module.exports = sprite.add(image, "cross");
 
 /***/ },
 /* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"check\" ><title>Operation Icons Copy 6</title><path d=\"M34.538 8L38 11.518 17.808 32 8 22.033l3.462-3.518 6.346 6.45z\" fill-rule=\"evenodd\"/></symbol>";
-	module.exports = sprite.add(image, "check");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"down\" ><title>Operation Icons Copy 4</title><path d=\"M22.355 28.237l-11.483-10.9c-.607-.576-1.714-.396-2.48.41l.674-.71c-.763.802-.73 2.071-.282 2.496l11.37 10.793-.04.039 2.088 2.196 1.098-1.043 12.308-11.682c.447-.425.48-1.694-.282-2.496l.674.71c-.766-.806-1.873-.986-2.48-.41L22.355 28.237z\" fill-rule=\"evenodd\"/></symbol>";
+	module.exports = sprite.add(image, "down");
 
 /***/ },
 /* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 48 48\" id=\"cross-circle-o\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch --> <title>step-48-&#x9519;&#x8BEF;-&#x5B9E;&#x5FC3;</title> <desc>Created with Sketch.</desc> <defs/> <g id=\"cross-circle-o_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross-circle-o_step-48-&#x9519;&#x8BEF;-&#x5B9E;&#x5FC3;\"> <path d=\"M24,48 C37.2552,48 48,37.2552 48,24 C48,10.7448 37.2552,0 24,0 C10.7448,0 0,10.7448 0,24 C0,37.2552 10.7448,48 24,48 Z M24.3528979,22.2299765 L16.7595141,14.6369589 C15.963097,13.8383925 15.2222827,13.8154868 14.4974902,14.4296225 C13.7726977,15.0437582 13.9375537,16.0471152 14.3727954,16.496517 L22.2249682,24.343746 L14.5037158,32.0674399 C13.7781456,32.7949682 13.9458544,33.7125204 14.4392626,34.2443808 C14.9326708,34.7762412 15.9934008,34.9267538 16.7512744,34.0698813 L24.3382495,26.4858969 L31.981621,34.1089438 C32.7780381,34.9075102 33.5898974,34.8343466 34.1933347,34.2552795 C34.796772,33.6762124 34.9135187,32.812668 34.1183231,32.0153264 L26.4613005,24.346281 L34.0048754,16.8248862 C34.8162768,16.1279868 34.9043097,15.0655787 34.3015063,14.4849204 C33.3827441,13.5999106 32.4530774,14.1466814 32.0377123,14.5631674 L24.3528979,22.2299765 Z\" id=\"cross-circle-o_Combined-Shape\"/> </g> </g> </symbol>";
-	module.exports = sprite.add(image, "cross-circle-o");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"ellipsis-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <!-- Generator: Sketch 41.1 (35376) - http://www.bohemiancoding.com/sketch --> <title>ellipsis-circle-cp</title> <desc>Created with Sketch.</desc> <defs/> <g id=\"ellipsis-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"ellipsis-circle_ellipsis-circle-cp\"> <g id=\"ellipsis-circle_Group\"> <path d=\"M22.13,0.109 C10.049,0.109 0.255,9.903 0.255,21.984 C0.255,34.065 10.049,43.859 22.13,43.859 C34.211,43.859 44.005,34.065 44.005,21.984 C44.005,9.903 34.211,0.109 22.13,0.109 Z M22.13,40.8090008 C11.7336013,40.8090008 3.30499924,32.3803987 3.30499924,21.984 C3.30499924,11.5876013 11.7336013,3.15899924 22.13,3.15899924 C32.5263987,3.15899924 40.9550008,11.5876013 40.9550008,21.984 C40.9550008,32.3803987 32.5263987,40.8090008 22.13,40.8090008 Z\" id=\"ellipsis-circle_Shape\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"21.888\" cy=\"22.701\" r=\"2.445\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"12.23\" cy=\"22.701\" r=\"2.445\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"31.546\" cy=\"22.701\" r=\"2.445\"/> </g> </g> </g> </symbol>";
+	module.exports = sprite.add(image, "ellipsis-circle");
 
 /***/ },
 /* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 48 48\" id=\"cross-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <defs/> <g id=\"cross-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross-circle_step-48-&#x9519;&#x8BEF;\"> <path d=\"M24,48 C37.2552,48 48,37.2552 48,24 C48,10.7448 37.2552,0 24,0 C10.7448,0 0,10.7448 0,24 C0,37.2552 10.7448,48 24,48 Z M24,45 C35.5983,45 45,35.5983 45,24 C45,12.4017 35.5983,3 24,3 C12.4017,3 3,12.4017 3,24 C3,35.5983 12.4017,45 24,45 Z\" id=\"cross-circle_Combined-Shape\"/> <path d=\"M24.3392549,22.2189068 L16.5648998,14.4445518 C15.9703079,13.8499598 15.0255464,13.8549458 14.43976,14.4407322 C13.8498895,15.0306027 13.8556836,15.9779762 14.4435795,16.5658721 L22.2179346,24.3402272 L14.4435795,32.1145823 C13.8556836,32.7024782 13.8498895,33.6498517 14.43976,34.2397221 C15.0255464,34.8255086 15.9703079,34.8304945 16.5648998,34.2359026 L24.3392549,26.4615475 L32.11361,34.2359026 C32.7082019,34.8304945 33.6529634,34.8255086 34.2387498,34.2397221 C34.8286203,33.6498517 34.8228262,32.7024782 34.2349303,32.1145823 L26.4605753,24.3402272 L34.2349303,16.5658721 C34.8228262,15.9779762 34.8286203,15.0306027 34.2387498,14.4407322 C33.6529634,13.8549458 32.7082019,13.8499598 32.11361,14.4445518 L24.3392549,22.2189068 Z\" id=\"cross-circle_Combined-Shape\"/> </g> </g> </symbol>";
-	module.exports = sprite.add(image, "cross-circle");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"ellipsis\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <circle cx=\"21.888\" cy=\"22\" r=\"4.045\"/> <circle cx=\"5.913\" cy=\"22\" r=\"4.045\"/> <circle cx=\"37.863\" cy=\"22\" r=\"4.045\"/> </g> </symbol>";
+	module.exports = sprite.add(image, "ellipsis");
 
 /***/ },
 /* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"cross\" > <defs/> <g id=\"cross_ALL-ICON\" stroke-rule=\"evenodd\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"cross_Group-15\" fill-rule=\"evenodd\" transform=\"translate(6.000000, 6.000000)\"> <rect id=\"cross_Rectangle-1643\" opacity=\"0\" x=\"0\" y=\"0\" width=\"22\" height=\"22\"/> <path d=\"M18.0084687,15.8522394 L26.9766601,6.8840479 L25.0926122,5 L16.1244208,13.9681915 L7.15622933,5 L5.27218143,6.8840479 L14.2403729,15.8522394 L5,25.0926122 L6.8840479,26.9766601 L16.1244208,17.7362872 L25.3647937,26.9766601 L27.2488416,25.0926122 L18.0084687,15.8522394 Z\" id=\"cross_Combined-Shape\"/> </g> </g> </symbol>";
-	module.exports = sprite.add(image, "cross");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 64 64\" id=\"exclamation-circle\" ><title>Share Icons Copy 3</title><path d=\"M59.58 40.889L41.193 9.11C39.135 5.382 35.723 3 31.387 3c-3.11 0-6.521 2.382-8.58 6.111L4.42 40.89C1.632 45.525 1.294 49.7 3.195 53.11 5.015 56.208 7.572 58 13 58h36.773c5.428 0 9.21-1.792 11.031-4.889 1.9-3.41 1.564-7.584-1.225-12.222zm-2.452 11c-.635 1.695-3.802 2.444-7.354 2.444H13c-3.591 0-5.493-.75-6.129-2.444-1.712-2.41-1.375-5.262 0-8.556l18.386-31.777c2.116-3.168 4.394-4.89 6.13-4.89 2.96 0 5.238 1.722 7.354 4.89l18.386 31.777c1.374 3.294 1.713 6.146 0 8.556zm-25.74-33c-.405 0-1.227.836-1.227 2.444v15.89c0 1.608.822 2.444 1.226 2.444 1.628 0 2.452-.836 2.452-2.445V21.333c0-1.608-.824-2.444-2.452-2.444zm0 23.222c-.405 0-1.227.788-1.227 1.222v2.445c0 .434.822 1.222 1.226 1.222 1.628 0 2.452-.788 2.452-1.222v-2.445c0-.434-.824-1.222-2.452-1.222z\" fill-rule=\"evenodd\"/></symbol>";
+	module.exports = sprite.add(image, "exclamation-circle");
 
 /***/ },
 /* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"down\" ><title>Operation Icons Copy 4</title><path d=\"M22.355 28.237l-11.483-10.9c-.607-.576-1.714-.396-2.48.41l.674-.71c-.763.802-.73 2.071-.282 2.496l11.37 10.793-.04.039 2.088 2.196 1.098-1.043 12.308-11.682c.447-.425.48-1.694-.282-2.496l.674.71c-.766-.806-1.873-.986-2.48-.41L22.355 28.237z\" fill-rule=\"evenodd\"/></symbol>";
-	module.exports = sprite.add(image, "down");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"info-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <circle cx=\"13.828\" cy=\"19.63\" r=\"1.938\"/> <circle cx=\"21.767\" cy=\"19.63\" r=\"1.938\"/> <circle cx=\"29.767\" cy=\"19.63\" r=\"1.938\"/> <path d=\"M22.102,4.161c-9.918,0-17.958,7.146-17.958,15.961c0,4.935,2.522,9.345,6.481,12.273v5.667l0.038,0.012\r\n\t\tc0.182,1.28,1.272,2.267,2.602,2.267c0.747,0,1.419-0.313,1.899-0.812l0.002,0.001l5.026-3.539\r\n\t\tc0.628,0.059,1.265,0.093,1.911,0.093c9.918,0,17.958-7.146,17.958-15.961C40.06,11.307,32.02,4.161,22.102,4.161z M22.062,34.062\r\n\t\tc-0.902,0-1.781-0.081-2.642-0.207l-5.882,4.234c-0.024,0.025-0.055,0.04-0.083,0.06l-0.008,0.006l0,0\r\n\t\tc-0.083,0.055-0.177,0.095-0.284,0.095c-0.29,0-0.525-0.235-0.525-0.525l0.005-6.375c-3.91-2.516-6.456-6.544-6.456-11.1\r\n\t\tc0-7.628,7.107-13.812,15.875-13.812s15.875,6.184,15.875,13.812S30.83,34.062,22.062,34.062z\"/> </g> </symbol>";
+	module.exports = sprite.add(image, "info-circle");
 
 /***/ },
 /* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"ellipsis-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <!-- Generator: Sketch 41.1 (35376) - http://www.bohemiancoding.com/sketch --> <title>ellipsis-circle-cp</title> <desc>Created with Sketch.</desc> <defs/> <g id=\"ellipsis-circle_Page-1\" stroke=\"none\" stroke-width=\"1\" fill-rule=\"evenodd\"> <g id=\"ellipsis-circle_ellipsis-circle-cp\"> <g id=\"ellipsis-circle_Group\"> <path d=\"M22.13,0.109 C10.049,0.109 0.255,9.903 0.255,21.984 C0.255,34.065 10.049,43.859 22.13,43.859 C34.211,43.859 44.005,34.065 44.005,21.984 C44.005,9.903 34.211,0.109 22.13,0.109 Z M22.13,40.8090008 C11.7336013,40.8090008 3.30499924,32.3803987 3.30499924,21.984 C3.30499924,11.5876013 11.7336013,3.15899924 22.13,3.15899924 C32.5263987,3.15899924 40.9550008,11.5876013 40.9550008,21.984 C40.9550008,32.3803987 32.5263987,40.8090008 22.13,40.8090008 Z\" id=\"ellipsis-circle_Shape\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"21.888\" cy=\"22.701\" r=\"2.445\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"12.23\" cy=\"22.701\" r=\"2.445\"/> <circle id=\"ellipsis-circle_Oval\" cx=\"31.546\" cy=\"22.701\" r=\"2.445\"/> </g> </g> </g> </symbol>";
-	module.exports = sprite.add(image, "ellipsis-circle");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 43 38\" id=\"koubei-o\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <path d=\"M37.75,0.227H5.25c-3.125,0-4.59,2.425-4.59,4.315v8.03c0,9.346,5.751,17.213,13.64,20.35\r\n\t\tc0.129,0.049,0.242,0.135,0.325,0.246c0.145,0.207,0.128,0.409,0.128,0.409l0.001,2.033c0,0,0.241,0.743,0.667,1.167\r\n\t\tc0.254,0.254,0.899,0.545,1.201,0.577c0.929,0.099,2.059,0.226,4.716-0.125c4.85-0.649,9.406-2.706,13.111-5.918\r\n\t\tc6.157-5.345,8.549-12.549,8.549-18.738V4.625C42.998,2.735,41.792,0.227,37.75,0.227z M41.037,13.272\r\n\t\tc0,5.58-2.277,11.784-7.87,16.603c-3.366,2.896-7.511,4.831-11.917,5.417c-2.413,0.317-3.347,0.186-4.191,0.096\r\n\t\tc-0.275-0.029-0.496-0.076-0.392-1.013c0.104-1.958-0.194-2.156-0.325-2.342c-0.076-0.1-0.261-0.287-0.378-0.332\r\n\t\tC8.797,28.874,2.577,21.698,2.577,13.272V5.203c0-1.703,0.335-3.06,3.173-3.06h31.292c3.671,0,3.995,1.174,3.995,2.878V13.272z\"/> <path d=\"M32.531,19.444c-0.336,0-0.62,0.171-0.809,0.42l-0.01-0.007l-0.002-0.001\r\n\t\tc-2.083,3.131-5.64,5.196-9.682,5.196c-6.419,0-11.623-5.204-11.623-11.623h-0.038c-0.02-0.552-0.467-0.995-1.023-0.995\r\n\t\tc-0.556,0-1.003,0.443-1.023,0.995H8.314c0,0.01,0.001,0.019,0.001,0.029c0,0.003-0.001,0.005-0.001,0.007\r\n\t\tc0,0.004,0.002,0.008,0.002,0.012c0.026,7.552,6.154,13.667,13.713,13.667c4.757,0,8.945-2.423,11.406-6.101\r\n\t\tc0,0,0.127-0.368,0.127-0.57C33.561,19.905,33.1,19.444,32.531,19.444z\"/> <ellipse cx=\"35.456\" cy=\"12.506\" rx=\"1.95\" ry=\"1.918\"/> </g> </symbol>";
+	module.exports = sprite.add(image, "koubei-o");
 
 /***/ },
 /* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"ellipsis\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <circle cx=\"21.888\" cy=\"22\" r=\"4.045\"/> <circle cx=\"5.913\" cy=\"22\" r=\"4.045\"/> <circle cx=\"37.863\" cy=\"22\" r=\"4.045\"/> </g> </symbol>";
-	module.exports = sprite.add(image, "ellipsis");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 43 38\" id=\"koubei\" ><title>&#x53E3;&#x7891;</title><g fill-rule=\"evenodd\"><path d=\"M4.921 1.227c-1.814 0-3.284 1.452-3.284 3.243v8.459c0 8.86 6.073 16.517 13.589 19.49a.701.701 0 0 1 .31.233c.138.196.122.388.122.388v2.148s-.012.463.393.865c.242.241.506.338.794.368.885.094 1.962.214 4.493-.119a23.972 23.972 0 0 0 12.492-5.61c5.866-5.067 8.145-11.896 8.145-17.763V4.563c0-1.792-1.47-3.336-3.285-3.336H4.92z\"/><path d=\"M33.506 12.506c0-1.06.873-1.918 1.95-1.918 1.078 0 1.95.858 1.95 1.918 0 1.059-.872 1.918-1.95 1.918-1.077 0-1.95-.86-1.95-1.918z\" fill=\"#FFF\"/><path d=\"M9.127 13.465c0 6.087 5.564 12.847 12.626 12.784 3.336-.03 8.006-1.522 10.778-5.784\" stroke=\"#FFF\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></symbol>";
+	module.exports = sprite.add(image, "koubei");
 
 /***/ },
 /* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 64 64\" id=\"exclamation-circle\" ><title>Share Icons Copy 3</title><path d=\"M59.58 40.889L41.193 9.11C39.135 5.382 35.723 3 31.387 3c-3.11 0-6.521 2.382-8.58 6.111L4.42 40.89C1.632 45.525 1.294 49.7 3.195 53.11 5.015 56.208 7.572 58 13 58h36.773c5.428 0 9.21-1.792 11.031-4.889 1.9-3.41 1.564-7.584-1.225-12.222zm-2.452 11c-.635 1.695-3.802 2.444-7.354 2.444H13c-3.591 0-5.493-.75-6.129-2.444-1.712-2.41-1.375-5.262 0-8.556l18.386-31.777c2.116-3.168 4.394-4.89 6.13-4.89 2.96 0 5.238 1.722 7.354 4.89l18.386 31.777c1.374 3.294 1.713 6.146 0 8.556zm-25.74-33c-.405 0-1.227.836-1.227 2.444v15.89c0 1.608.822 2.444 1.226 2.444 1.628 0 2.452-.836 2.452-2.445V21.333c0-1.608-.824-2.444-2.452-2.444zm0 23.222c-.405 0-1.227.788-1.227 1.222v2.445c0 .434.822 1.222 1.226 1.222 1.628 0 2.452-.788 2.452-1.222v-2.445c0-.434-.824-1.222-2.452-1.222z\" fill-rule=\"evenodd\"/></symbol>";
-	module.exports = sprite.add(image, "exclamation-circle");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"left\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <defs> <rect id=\"left_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"left_SVGID_2_\"> <use xlink:href=\"#left_SVGID_1_\" overflow=\"visible\"/> </clipPath> <g clip-path=\"url(#left_SVGID_2_)\"> <defs> <rect id=\"left_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"left_SVGID_4_\"> <use xlink:href=\"#left_SVGID_3_\" overflow=\"visible\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#left_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\"/> </g> </g> <polygon points=\"16.247,21.399 28.48,9.166 30.601,11.287 20.483,21.406 30.601,31.524 28.48,33.645 16.247,21.412 16.254,21.406 \r\n\t\"/> </symbol>";
+	module.exports = sprite.add(image, "left");
 
 /***/ },
 /* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"info-circle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <circle cx=\"13.828\" cy=\"19.63\" r=\"1.938\"/> <circle cx=\"21.767\" cy=\"19.63\" r=\"1.938\"/> <circle cx=\"29.767\" cy=\"19.63\" r=\"1.938\"/> <path d=\"M22.102,4.161c-9.918,0-17.958,7.146-17.958,15.961c0,4.935,2.522,9.345,6.481,12.273v5.667l0.038,0.012\r\n\t\tc0.182,1.28,1.272,2.267,2.602,2.267c0.747,0,1.419-0.313,1.899-0.812l0.002,0.001l5.026-3.539\r\n\t\tc0.628,0.059,1.265,0.093,1.911,0.093c9.918,0,17.958-7.146,17.958-15.961C40.06,11.307,32.02,4.161,22.102,4.161z M22.062,34.062\r\n\t\tc-0.902,0-1.781-0.081-2.642-0.207l-5.882,4.234c-0.024,0.025-0.055,0.04-0.083,0.06l-0.008,0.006l0,0\r\n\t\tc-0.083,0.055-0.177,0.095-0.284,0.095c-0.29,0-0.525-0.235-0.525-0.525l0.005-6.375c-3.91-2.516-6.456-6.544-6.456-11.1\r\n\t\tc0-7.628,7.107-13.812,15.875-13.812s15.875,6.184,15.875,13.812S30.83,34.062,22.062,34.062z\"/> </g> </symbol>";
-	module.exports = sprite.add(image, "info-circle");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 -2 59.75 60.25\" id=\"loading\" > <path fill=\"#cccccc\" d=\"M29.691-.527c-15.648 0-28.333 12.685-28.333 28.333s12.685 28.333 28.333 28.333c15.648 0 28.333-12.685 28.333-28.333S45.339-.527 29.691-.527zm.184 53.75c-14.037 0-25.417-11.379-25.417-25.417S15.838 2.39 29.875 2.39s25.417 11.379 25.417 25.417-11.38 25.416-25.417 25.416z\"/> <path fill=\"none\" stroke=\"#108ee9\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" d=\"M56.587 29.766c.369-7.438-1.658-14.699-6.393-19.552\"/> </symbol>";
+	module.exports = sprite.add(image, "loading");
 
 /***/ },
 /* 397 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 43 38\" id=\"koubei-o\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g> <path d=\"M37.75,0.227H5.25c-3.125,0-4.59,2.425-4.59,4.315v8.03c0,9.346,5.751,17.213,13.64,20.35\r\n\t\tc0.129,0.049,0.242,0.135,0.325,0.246c0.145,0.207,0.128,0.409,0.128,0.409l0.001,2.033c0,0,0.241,0.743,0.667,1.167\r\n\t\tc0.254,0.254,0.899,0.545,1.201,0.577c0.929,0.099,2.059,0.226,4.716-0.125c4.85-0.649,9.406-2.706,13.111-5.918\r\n\t\tc6.157-5.345,8.549-12.549,8.549-18.738V4.625C42.998,2.735,41.792,0.227,37.75,0.227z M41.037,13.272\r\n\t\tc0,5.58-2.277,11.784-7.87,16.603c-3.366,2.896-7.511,4.831-11.917,5.417c-2.413,0.317-3.347,0.186-4.191,0.096\r\n\t\tc-0.275-0.029-0.496-0.076-0.392-1.013c0.104-1.958-0.194-2.156-0.325-2.342c-0.076-0.1-0.261-0.287-0.378-0.332\r\n\t\tC8.797,28.874,2.577,21.698,2.577,13.272V5.203c0-1.703,0.335-3.06,3.173-3.06h31.292c3.671,0,3.995,1.174,3.995,2.878V13.272z\"/> <path d=\"M32.531,19.444c-0.336,0-0.62,0.171-0.809,0.42l-0.01-0.007l-0.002-0.001\r\n\t\tc-2.083,3.131-5.64,5.196-9.682,5.196c-6.419,0-11.623-5.204-11.623-11.623h-0.038c-0.02-0.552-0.467-0.995-1.023-0.995\r\n\t\tc-0.556,0-1.003,0.443-1.023,0.995H8.314c0,0.01,0.001,0.019,0.001,0.029c0,0.003-0.001,0.005-0.001,0.007\r\n\t\tc0,0.004,0.002,0.008,0.002,0.012c0.026,7.552,6.154,13.667,13.713,13.667c4.757,0,8.945-2.423,11.406-6.101\r\n\t\tc0,0,0.127-0.368,0.127-0.57C33.561,19.905,33.1,19.444,32.531,19.444z\"/> <ellipse cx=\"35.456\" cy=\"12.506\" rx=\"1.95\" ry=\"1.918\"/> </g> </symbol>";
-	module.exports = sprite.add(image, "koubei-o");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"question-circle\" ><title>Operation Icons Copy 12</title><g fill-rule=\"evenodd\"><path d=\"M21.186 3C10.333 3 1.827 11.506 1.827 22.358 1.827 32.494 10.333 41 21.186 41c10.133 0 18.641-8.506 18.641-18.642C39.827 11.506 31.32 3 21.186 3m15.641 19c0 8.823-7.179 16-16 16-8.823 0-16-7.177-16-16s7.177-16 16-16c8.821 0 16 7.177 16 16z\"/><path d=\"M22.827 31.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 3-.001\"/><path d=\"M26.827 16.02c0 .957-.203 1.822-.61 2.593-.427.792-1.117 1.612-2.073 2.457-.867.734-1.453 1.435-1.754 2.096-.302.7-.453 1.693-.453 2.979a.828.828 0 0 1-.823.855.828.828 0 0 1-.584-.22.877.877 0 0 1-.24-.635c0-1.305.168-2.38.506-3.227.336-.883.93-1.682 1.779-2.4 1.01-.883 1.71-1.692 2.1-2.428.337-.645.504-1.38.504-2.209-.018-.936-.3-1.7-.85-2.289-.654-.717-1.62-1.075-2.896-1.075-1.506 0-2.596.535-3.269 1.6-.46.754-.689 1.645-.689 2.677 0 .257-.09.477-.266.66a.747.747 0 0 1-.558.25.73.73 0 0 1-.585-.194c-.16-.164-.239-.393-.239-.69 0-1.819.584-3.272 1.754-4.357C18.644 11.486 19.927 11 21.433 11h.293c1.452 0 2.638.414 3.561 1.241 1.027.902 1.54 2.162 1.54 3.78z\"/></g></symbol>";
+	module.exports = sprite.add(image, "question-circle");
 
 /***/ },
 /* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 43 38\" id=\"koubei\" ><title>&#x53E3;&#x7891;</title><g fill-rule=\"evenodd\"><path d=\"M4.921 1.227c-1.814 0-3.284 1.452-3.284 3.243v8.459c0 8.86 6.073 16.517 13.589 19.49a.701.701 0 0 1 .31.233c.138.196.122.388.122.388v2.148s-.012.463.393.865c.242.241.506.338.794.368.885.094 1.962.214 4.493-.119a23.972 23.972 0 0 0 12.492-5.61c5.866-5.067 8.145-11.896 8.145-17.763V4.563c0-1.792-1.47-3.336-3.285-3.336H4.92z\"/><path d=\"M33.506 12.506c0-1.06.873-1.918 1.95-1.918 1.078 0 1.95.858 1.95 1.918 0 1.059-.872 1.918-1.95 1.918-1.077 0-1.95-.86-1.95-1.918z\" fill=\"#FFF\"/><path d=\"M9.127 13.465c0 6.087 5.564 12.847 12.626 12.784 3.336-.03 8.006-1.522 10.778-5.784\" stroke=\"#FFF\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></symbol>";
-	module.exports = sprite.add(image, "koubei");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"right\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <defs> <rect id=\"right_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"right_SVGID_2_\"> <use xlink:href=\"#right_SVGID_1_\" overflow=\"visible\"/> </clipPath> <g clip-path=\"url(#right_SVGID_2_)\"> <defs> <rect id=\"right_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"right_SVGID_4_\"> <use xlink:href=\"#right_SVGID_3_\" overflow=\"visible\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#right_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\"/> </g> </g> <polygon points=\"30.601,21.399 18.368,9.166 16.247,11.287 26.365,21.406 16.247,31.524 18.368,33.645 30.601,21.412 30.595,21.406 \r\n\t\"/> </symbol>";
+	module.exports = sprite.add(image, "right");
 
 /***/ },
 /* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"left\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <defs> <rect id=\"left_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"left_SVGID_2_\"> <use xlink:href=\"#left_SVGID_1_\" overflow=\"visible\"/> </clipPath> <g clip-path=\"url(#left_SVGID_2_)\"> <defs> <rect id=\"left_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"left_SVGID_4_\"> <use xlink:href=\"#left_SVGID_3_\" overflow=\"visible\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#left_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\"/> </g> </g> <polygon points=\"16.247,21.399 28.48,9.166 30.601,11.287 20.483,21.406 30.601,31.524 28.48,33.645 16.247,21.412 16.254,21.406 \r\n\t\"/> </symbol>";
-	module.exports = sprite.add(image, "left");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"search\" ><title>System Icons Copy 8</title><path d=\"M32.981 29.255l8.914 8.293L39.603 40l-8.859-8.242a15.952 15.952 0 0 1-10.754 4.147C11.16 35.905 4 28.763 4 19.952 4 11.142 11.16 4 19.99 4s15.99 7.142 15.99 15.952c0 3.472-1.112 6.685-2.999 9.303zm.05-9.21c0 7.123-5.701 12.918-12.88 12.918-7.177 0-13.016-5.795-13.016-12.918 0-7.12 5.839-12.917 13.017-12.917 7.178 0 12.879 5.797 12.879 12.917z\" fill-rule=\"evenodd\"/></symbol>";
+	module.exports = sprite.add(image, "search");
 
 /***/ },
 /* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 -2 59.75 60.25\" id=\"loading\" > <path fill=\"#cccccc\" d=\"M29.691-.527c-15.648 0-28.333 12.685-28.333 28.333s12.685 28.333 28.333 28.333c15.648 0 28.333-12.685 28.333-28.333S45.339-.527 29.691-.527zm.184 53.75c-14.037 0-25.417-11.379-25.417-25.417S15.838 2.39 29.875 2.39s25.417 11.379 25.417 25.417-11.38 25.416-25.417 25.416z\"/> <path fill=\"none\" stroke=\"#108ee9\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" d=\"M56.587 29.766c.369-7.438-1.658-14.699-6.393-19.552\"/> </symbol>";
-	module.exports = sprite.add(image, "loading");
+	var sprite = __webpack_require__(380);
+	var image = "<symbol viewBox=\"0 0 44 44\" id=\"up\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <title>background</title> <rect x=\"-1\" y=\"-1\" width=\"46\" height=\"46\" id=\"up_canvas_background\" fill=\"none\"/> </g> <g> <title>Layer 1</title> <g id=\"up_svg_1\"> <defs> <rect id=\"up_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"up_SVGID_2_\"> <use xlink:href=\"#up_SVGID_1_\" id=\"up_svg_2\"/> </clipPath> <g clip-path=\"url(#up_SVGID_2_)\" id=\"up_svg_3\"> <defs> <rect id=\"up_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"up_SVGID_4_\"> <use xlink:href=\"#up_SVGID_3_\" id=\"up_svg_4\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#up_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\" id=\"up_svg_5\"/> </g> </g> <polygon points=\"30.601,21.399 18.368,9.166 16.247,11.287 26.365,21.406 16.247,31.524 18.368,33.645 30.601,21.412 30.595,21.406   \" id=\"up_svg_6\" transform=\"rotate(-90 23.423999786376957,21.405500411987305) \"/> </g> </symbol>";
+	module.exports = sprite.add(image, "up");
 
 /***/ },
 /* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"question-circle\" ><title>Operation Icons Copy 12</title><g fill-rule=\"evenodd\"><path d=\"M21.186 3C10.333 3 1.827 11.506 1.827 22.358 1.827 32.494 10.333 41 21.186 41c10.133 0 18.641-8.506 18.641-18.642C39.827 11.506 31.32 3 21.186 3m15.641 19c0 8.823-7.179 16-16 16-8.823 0-16-7.177-16-16s7.177-16 16-16c8.821 0 16 7.177 16 16z\"/><path d=\"M22.827 31.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 3-.001\"/><path d=\"M26.827 16.02c0 .957-.203 1.822-.61 2.593-.427.792-1.117 1.612-2.073 2.457-.867.734-1.453 1.435-1.754 2.096-.302.7-.453 1.693-.453 2.979a.828.828 0 0 1-.823.855.828.828 0 0 1-.584-.22.877.877 0 0 1-.24-.635c0-1.305.168-2.38.506-3.227.336-.883.93-1.682 1.779-2.4 1.01-.883 1.71-1.692 2.1-2.428.337-.645.504-1.38.504-2.209-.018-.936-.3-1.7-.85-2.289-.654-.717-1.62-1.075-2.896-1.075-1.506 0-2.596.535-3.269 1.6-.46.754-.689 1.645-.689 2.677 0 .257-.09.477-.266.66a.747.747 0 0 1-.558.25.73.73 0 0 1-.585-.194c-.16-.164-.239-.393-.239-.69 0-1.819.584-3.272 1.754-4.357C18.644 11.486 19.927 11 21.433 11h.293c1.452 0 2.638.414 3.561 1.241 1.027.902 1.54 2.162 1.54 3.78z\"/></g></symbol>";
-	module.exports = sprite.add(image, "question-circle");
+	'use strict';__webpack_require__(272);
+	__webpack_require__(402);
 
 /***/ },
 /* 402 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"right\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <defs> <rect id=\"right_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"right_SVGID_2_\"> <use xlink:href=\"#right_SVGID_1_\" overflow=\"visible\"/> </clipPath> <g clip-path=\"url(#right_SVGID_2_)\"> <defs> <rect id=\"right_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"right_SVGID_4_\"> <use xlink:href=\"#right_SVGID_3_\" overflow=\"visible\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#right_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\"/> </g> </g> <polygon points=\"30.601,21.399 18.368,9.166 16.247,11.287 26.365,21.406 16.247,31.524 18.368,33.645 30.601,21.412 30.595,21.406 \r\n\t\"/> </symbol>";
-	module.exports = sprite.add(image, "right");
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(403);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(276)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css", function() {
+				var newContent = require("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
 
 /***/ },
 /* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"search\" ><title>System Icons Copy 8</title><path d=\"M32.981 29.255l8.914 8.293L39.603 40l-8.859-8.242a15.952 15.952 0 0 1-10.754 4.147C11.16 35.905 4 28.763 4 19.952 4 11.142 11.16 4 19.99 4s15.99 7.142 15.99 15.952c0 3.472-1.112 6.685-2.999 9.303zm.05-9.21c0 7.123-5.701 12.918-12.88 12.918-7.177 0-13.016-5.795-13.016-12.918 0-7.12 5.839-12.917 13.017-12.917 7.178 0 12.879 5.797 12.879 12.917z\" fill-rule=\"evenodd\"/></symbol>";
-	module.exports = sprite.add(image, "search");
+	exports = module.exports = __webpack_require__(275)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-progress-outer {\n  background-color: #ddd;\n  display: block;\n}\n.am-progress-fixed-outer {\n  position: fixed;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 2000;\n}\n.am-progress-hide-outer {\n  background-color: transparent;\n}\n.am-progress-bar {\n  border: 0.04rem solid #108ee9;\n  -webkit-transition: all 0.3s linear 0s;\n  transition: all 0.3s linear 0s;\n}\n", ""]);
+
+	// exports
+
 
 /***/ },
 /* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
-	var sprite = __webpack_require__(384);
-	var image = "<symbol viewBox=\"0 0 44 44\" id=\"up\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <title>Operation Icons Copy 4</title> <g> <title>background</title> <rect x=\"-1\" y=\"-1\" width=\"46\" height=\"46\" id=\"up_canvas_background\" fill=\"none\"/> </g> <g> <title>Layer 1</title> <g id=\"up_svg_1\"> <defs> <rect id=\"up_SVGID_1_\" x=\"-129\" y=\"-845\" width=\"24\" height=\"24\"/> </defs> <clipPath id=\"up_SVGID_2_\"> <use xlink:href=\"#up_SVGID_1_\" id=\"up_svg_2\"/> </clipPath> <g clip-path=\"url(#up_SVGID_2_)\" id=\"up_svg_3\"> <defs> <rect id=\"up_SVGID_3_\" x=\"-903\" y=\"-949\" width=\"1850\" height=\"1945\"/> </defs> <clipPath id=\"up_SVGID_4_\"> <use xlink:href=\"#up_SVGID_3_\" id=\"up_svg_4\"/> </clipPath> <rect x=\"-134\" y=\"-850\" opacity=\"0\" clip-path=\"url(#up_SVGID_4_)\" fill=\"#D8D8D8\" width=\"34\" height=\"34\" id=\"up_svg_5\"/> </g> </g> <polygon points=\"30.601,21.399 18.368,9.166 16.247,11.287 26.365,21.406 16.247,31.524 18.368,33.645 30.601,21.412 30.595,21.406   \" id=\"up_svg_6\" transform=\"rotate(-90 23.423999786376957,21.405500411987305) \"/> </g> </symbol>";
-	module.exports = sprite.add(image, "up");
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
+	var _objectAssign=__webpack_require__(3);var _objectAssign2=_interopRequireDefault(_objectAssign);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
+	Progress=function(_React$Component){(0,_inherits3["default"])(Progress,_React$Component);function Progress(){(0,_classCallCheck3["default"])(this,Progress);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}Progress.prototype.
+	componentWillReceiveProps=function componentWillReceiveProps(){
+	this.noAppearTransition=true;
+	};Progress.prototype.
+	componentDidMount=function componentDidMount(){var _this2=this;
+	if(this.props.appearTransition){
+	setTimeout(function(){
+	_this2.refs.bar.style.width=_this2.props.percent+'%';
+	},10);
+	}
+	};Progress.prototype.
+	render=function render(){var _classNames;var _props=
+	this.props,prefixCls=_props.prefixCls,position=_props.position,unfilled=_props.unfilled,_props$style=_props.style,style=_props$style===undefined?{}:_props$style;
+	var percentStyle={
+	width:this.noAppearTransition||!this.props.appearTransition?this.props.percent+'%':0,
+	height:0};
+
+	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-outer',true),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-fixed-outer',position==='fixed'),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-hide-outer',unfilled==='hide'),_classNames));
+
+	return _react2["default"].createElement('div',{className:wrapCls},
+	_react2["default"].createElement('div',{ref:'bar',className:prefixCls+'-bar',style:(0,_objectAssign2["default"])({},style,percentStyle)}));
+
+	};return Progress;}(_react2["default"].Component);exports["default"]=Progress;
+
+	Progress.defaultProps={
+	prefixCls:'am-progress',
+	percent:0,
+	position:'fixed',
+	unfilled:'show',
+	appearTransition:false};module.exports=exports['default'];
 
 /***/ },
 /* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';__webpack_require__(272);
-	__webpack_require__(370);
+	__webpack_require__(366);
 	__webpack_require__(406);
 
 /***/ },
@@ -16112,7 +16145,7 @@ webpackJsonp([0],[
 /* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
 
 
 
@@ -16123,7 +16156,7 @@ webpackJsonp([0],[
 
 	var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
-	var _index=__webpack_require__(381);var _index2=_interopRequireDefault(_index);
+	var _index=__webpack_require__(377);var _index2=_interopRequireDefault(_index);
 	var _rcTouchable=__webpack_require__(409);var _rcTouchable2=_interopRequireDefault(_rcTouchable);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var __rest=undefined&&undefined.__rest||function(s,e){var t={};for(var p in s){if(Object.prototype.hasOwnProperty.call(s,p)&&e.indexOf(p)<0)t[p]=s[p];}if(s!=null&&typeof Object.getOwnPropertySymbols==="function")for(var i=0,p=Object.getOwnPropertySymbols(s);i<p.length;i++){if(e.indexOf(p[i])<0)t[p[i]]=s[p[i]];}return t;};
 	var rxTwoCNChar=/^[\u4e00-\u9fa5]{2}$/;
 	var isTwoCNChar=rxTwoCNChar.test.bind(rxTwoCNChar);
@@ -19234,7 +19267,7 @@ webpackJsonp([0],[
 /* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _rcDialog=__webpack_require__(414);var _rcDialog2=_interopRequireDefault(_rcDialog);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
 	var _objectAssign=__webpack_require__(3);var _objectAssign2=_interopRequireDefault(_objectAssign);
@@ -19621,7 +19654,7 @@ webpackJsonp([0],[
 /* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports.Brief=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports.Brief=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
 
 
 
@@ -20948,7 +20981,7 @@ webpackJsonp([0],[
 /* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
 	var _index=__webpack_require__(440);var _index2=_interopRequireDefault(_index);
 	var _Checkbox=__webpack_require__(446);var _Checkbox2=_interopRequireDefault(_Checkbox);
@@ -20990,7 +21023,7 @@ webpackJsonp([0],[
 /* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
 	var _Checkbox=__webpack_require__(446);var _Checkbox2=_interopRequireDefault(_Checkbox);
 	var _getDataAttr=__webpack_require__(458);var _getDataAttr2=_interopRequireDefault(_getDataAttr);
@@ -55292,7 +55325,7 @@ webpackJsonp([0],[
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.breakdownSelectChange = exports.selectChange = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.displayAnswerTest = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
+	exports.getExerciseSample = exports.getChapter = exports.getTestResult = exports.getStuTestInfo = exports.getTestRankingList = exports.getTestStatus = exports.getStudentData = exports.submitExerciseLog = exports.breakdownSelectChange = exports.selectChange = exports.updateTestLog = exports.updateExerciseST = exports.updateExerciseTime = exports.updateExindex = exports.closeModal = exports.updateAnswerTest = exports.jumpNext = exports.submitFeedBack = exports.jumpToExercise = exports.getMyTestList = exports.getTestData = exports.getMyChapter = exports.regUser = exports.loginUser = exports.logoutAndRedirect = exports.logout = exports.regUserRequest = exports.loginUserRequest = exports.regUserFailure = exports.loginUserFailure = exports.regUserSuccess = exports.loginUserSuccess = undefined;
 
 	var _NetUtil = __webpack_require__(643);
 
@@ -55608,7 +55641,7 @@ webpackJsonp([0],[
 	    };
 	};
 
-	var submitFeedBack = exports.submitFeedBack = function submitFeedBack(exindex, breakdown_sn) {
+	var submitFeedBack = exports.submitFeedBack = function submitFeedBack(exindex) {
 	    return {
 	        type: 'SUBMIT_FEEDBACK',
 	        exindex: exindex
@@ -55617,9 +55650,9 @@ webpackJsonp([0],[
 
 	/**
 	 * 提交后跳转到下一题
-	 * @param  {Boolean} isQ [true:题目页面跳转/false:导学页面跳转]
+	 * @param  {Boolean} answerTestDisplay [true:题目页面跳转/false:导学页面跳转]
 	 */
-	var jumpNext = exports.jumpNext = function jumpNext(answerTestDisplay) {
+	var jumpNext = exports.jumpNext = function jumpNext(answer_test) {
 	    return function (dispatch, getState) {
 	        var testData = getState().testData;
 	        var exindex = testData.get("exindex");
@@ -55627,7 +55660,7 @@ webpackJsonp([0],[
 	        var exercise = testData.get("exercise").toJS();
 	        var exercise_state = test_log[exindex].exercise_state;
 	        var blength = exercise[exindex].breakdown.length;
-	        if (!answerTestDisplay || exercise_state || blength == 1) {
+	        if (!answer_test || exercise_state || blength == 1) {
 	            var next = -1;
 	            var i = exindex + 1;
 	            while (i != exindex) {
@@ -55674,15 +55707,16 @@ webpackJsonp([0],[
 	        } else {
 	            console.log('jump');
 	            dispatch(closeModal());
-	            dispatch(displayAnswerTest());
+	            dispatch(updateAnswerTest(exindex, 1));
 	            //dispatch(push("/mobile-test/AnswerTest"));
 	        }
 	    };
 	};
 
-	var displayAnswerTest = exports.displayAnswerTest = function displayAnswerTest() {
+	var updateAnswerTest = exports.updateAnswerTest = function updateAnswerTest(exindex, answer_test) {
 	    return {
-	        type: 'DISPLAY_ANSWER_TEST'
+	        type: 'UPDATE_ANSWER_TEST',
+	        answer_test: answer_test
 	    };
 	};
 
@@ -60236,9 +60270,9 @@ webpackJsonp([0],[
 
 	var _list2 = _interopRequireDefault(_list);
 
-	var _css4 = __webpack_require__(365);
+	var _css4 = __webpack_require__(271);
 
-	var _wingBlank = __webpack_require__(368);
+	var _wingBlank = __webpack_require__(281);
 
 	var _wingBlank2 = _interopRequireDefault(_wingBlank);
 
@@ -60518,15 +60552,15 @@ webpackJsonp([0],[
 
 	var _progress2 = _interopRequireDefault(_progress);
 
-	var _css6 = __webpack_require__(369);
+	var _css6 = __webpack_require__(365);
 
-	var _navBar = __webpack_require__(375);
+	var _navBar = __webpack_require__(371);
 
 	var _navBar2 = _interopRequireDefault(_navBar);
 
-	var _css7 = __webpack_require__(370);
+	var _css7 = __webpack_require__(366);
 
-	var _icon = __webpack_require__(381);
+	var _icon = __webpack_require__(377);
 
 	var _icon2 = _interopRequireDefault(_icon);
 
@@ -61260,7 +61294,7 @@ webpackJsonp([0],[
 	    value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -61483,7 +61517,7 @@ webpackJsonp([0],[
 	    value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -61558,7 +61592,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -61924,7 +61958,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -62537,7 +62571,7 @@ webpackJsonp([0],[
 /* 706 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _rcTabs=__webpack_require__(707);var _rcTabs2=_interopRequireDefault(_rcTabs);
 	var _SwipeableTabContent=__webpack_require__(711);var _SwipeableTabContent2=_interopRequireDefault(_SwipeableTabContent);
 	var _TabContent=__webpack_require__(712);var _TabContent2=_interopRequireDefault(_TabContent);
@@ -62898,7 +62932,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -63102,7 +63136,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -66284,7 +66318,7 @@ webpackJsonp([0],[
 
 	var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -66400,7 +66434,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -66498,7 +66532,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -66732,9 +66766,9 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _css = __webpack_require__(365);
+	var _css = __webpack_require__(271);
 
-	var _wingBlank = __webpack_require__(368);
+	var _wingBlank = __webpack_require__(281);
 
 	var _wingBlank2 = _interopRequireDefault(_wingBlank);
 
@@ -66744,9 +66778,9 @@ webpackJsonp([0],[
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _css3 = __webpack_require__(271);
+	var _css3 = __webpack_require__(401);
 
-	var _progress = __webpack_require__(281);
+	var _progress = __webpack_require__(404);
 
 	var _progress2 = _interopRequireDefault(_progress);
 
@@ -68412,9 +68446,9 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _css = __webpack_require__(365);
+	var _css = __webpack_require__(271);
 
-	var _wingBlank = __webpack_require__(368);
+	var _wingBlank = __webpack_require__(281);
 
 	var _wingBlank2 = _interopRequireDefault(_wingBlank);
 
@@ -68671,7 +68705,7 @@ webpackJsonp([0],[
 /* 749 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(376);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(372);var _extends3=_interopRequireDefault(_extends2);var _defineProperty2=__webpack_require__(282);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(301);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(302);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(356);var _inherits3=_interopRequireDefault(_inherits2);
 	var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
 	var _classnames=__webpack_require__(364);var _classnames2=_interopRequireDefault(_classnames);
 	var _omit=__webpack_require__(455);var _omit2=_interopRequireDefault(_omit);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}
@@ -68987,7 +69021,7 @@ webpackJsonp([0],[
 
 	var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
@@ -69852,7 +69886,7 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _extends2 = __webpack_require__(376);
+	var _extends2 = __webpack_require__(372);
 
 	var _extends3 = _interopRequireDefault(_extends2);
 

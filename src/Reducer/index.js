@@ -159,8 +159,8 @@ export const testData = (state = defaulatTestData, action = {}) => {
             return state.updateIn(['test_log', action.i, 'ac_time'], ac_time => ac_time + action.ac_time);
         case 'UPDATE_FINISH_TIME':
             return state.set("finish_time", new Date());
-        case 'DISPLAY_ANSWER_TEST':
-            return state.set("answerTestDisplay", 1);
+        case 'UPDATE_ANSWER_TEST':
+            return state.setIn(["test_log", action.exindex], action.answer_test);
         case 'CLOSE_MODAL':
             return state.set('modalOpen', false);
         case 'SUBMIT_EXERCISE_LOG':
