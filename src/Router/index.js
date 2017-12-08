@@ -9,6 +9,7 @@ import MyTest from '../Component/my_test.js'
 import MyChapter from '../Component/MyChapter.js'
 import login from '../Component/login.js'
 import { Route, IndexRoute } from 'react-router';
+import { requireAuthentication } from '../utils';
 
 const isReactComponent = (obj) => Boolean(obj && obj.prototype && Boolean(obj.prototype.isReactComponent));
 
