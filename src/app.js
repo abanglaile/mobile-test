@@ -10,7 +10,7 @@ import { Router, browserHistory } from 'react-router'
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux'
 
 import * as reducer from './Reducer/index';
-
+import {loginUserSuccess} from './Action';
 import routes from './Router/'; 
 // import reducers from './reducers' // Or wherever you keep your reducers
 
@@ -29,6 +29,11 @@ const store = createStore(
 
 // Create an enhanced history that syncs navigation events with the store
 const history = syncHistoryWithStore(browserHistory, store)
+
+let token = localStorage.getItem('token');
+if (token !== null) {
+    store.dispatch(loginUserSuccess(token));
+}
 
 ReactDOM.render(
   <Provider store={store}>
