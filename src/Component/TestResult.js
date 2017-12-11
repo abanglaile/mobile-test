@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import *as action from '../Action/';
 import {connect} from 'react-redux';
-import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal, Grid} from 'antd-mobile';
+import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal } from 'antd-mobile';
 import { Progress } from 'antd';
 
 import Tex from './renderer.js';
@@ -139,7 +139,7 @@ class TestResult extends React.Component {
         />
         <Tabs defaultActiveKey="1">
           <TabPane tab="题目情况" key="1">
-            {this.renderExerciseList2()}
+            {this.renderExerciseList()}
           </TabPane>
           <TabPane tab="知识点" key="2">
             <List className="my-list">
