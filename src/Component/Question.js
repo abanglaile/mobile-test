@@ -146,10 +146,6 @@ class Question extends React.Component {
   onPopup(e){
     const {exercise, test_log} = this.props;
     e.preventDefault();
-          // <div style={{float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%"}}>
-      //           <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
-      //           <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
-      //         </div>
     Popup.show(
     <div>
       <List renderHeader={this.renderHeader}
@@ -160,7 +156,6 @@ class Question extends React.Component {
           ? <List.Item onClick={e => this.jumpToExercise(e, i)} extra={<Icon type={test_log[i].exercise_state ? 'check' : 'cross'} />} key={i}>{i+1}</List.Item>
           : <List.Item arrow="horizontal" onClick={e => this.jumpToExercise(e, i)} key={i} >{i+1}</List.Item>
         ))}
-
       </List>
     </div>, 
       { animationType: 'slide-up', onMaskClose: e => this.onMaskClose()});
@@ -278,13 +273,14 @@ class Question extends React.Component {
 
   renderBreakdown(){
     const {exercise, exindex, test_log} = this.props;
-    const {breakdown, title, answer_test, exercise_state} = exercise[exindex];
-
-    if(answer_test){
+    const {breakdown, title} = exercise[exindex];
+    
+    if(test_log[exindex].answer_test){
       var {breakdown_sn} = test_log[exindex];
       return (
       <List renderHeader='请选择你做对的步骤'>
         {breakdown.map((item,i) => {
+          console.log(breakdown_sn[i].sn_state);
           const presn = item.presn;
           //显示第一个或前置已经被选择（最后答案不显示）
           if((i != breakdown.length - 1) && (breakdown_sn[i].sn_state >= 0 || (presn > 0 && breakdown_sn[presn - 1].sn_state > 0))){
@@ -297,31 +293,16 @@ class Question extends React.Component {
         })}
       </List>
       );  
-    }else if(exercise_state >= 0){
-      return(
-        <List renderHeader='请选择你做对的步骤'>
-          {breakdown.map((item) => (
-              <List.Item arrow="horizontal">
-                  {item.kpname}
-              </List.Item>
-          ))}
-        </List>
-      );
     }
+    
     
   }
 
   renderFooter(){
-<<<<<<< HEAD
 
     const {exindex, test_log,record,exercise} = this.props;
     const {exercise_state} = test_log[exindex];
     if(test_log[exindex].answer_test){
-=======
-    const {exindex, test_log} = this.props;
-    const {answer_test, exercise_state} = test_log[exindex];
-    if(answer_test){
->>>>>>> 018c95dca8ba847485b7b45aeea6b47d77d802ac
       return (
         <div style={{
                   display: 'flex',
@@ -341,19 +322,24 @@ class Question extends React.Component {
     }else if(exercise_state < 0){
       return (
           <div style={{
+                  display: 'flex',
                   position: 'fixed',
                   bottom: '0',
                   width: '100%',
                   height: "1.2rem",
                   borderTop: "solid 1px #CCC",
                   }}>
-              <Button type="primary" disable={exindex > 0} inline onclick={e => this.props.updateExindex(exindex - 1)} style={{margin: '0.2rem 0.3rem 0 0.5rem'}}>上一题</Button>
-              <Button style={{margin: '0.2rem 0.3rem 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+              <div style={{float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%"}}>
+                <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
+                <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
+              </div>
+              <Button type="primary">上一题</Button>
+              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
                 onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
                 type="primary" inline>
               提交答案
               </Button>
-              <Button type="primary" disable={exindex < exercise.length} onclick={e => this.props.updateExindex(exindex + 1)} style={{margin: '0.2rem 0 0 0'}} inline>下一题</Button>
+              <Button type="primary">下一题</Button>
           </div>
       )
     }
