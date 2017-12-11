@@ -103,12 +103,16 @@ class TestResult extends React.Component {
   }
 
   renderExerciseList2(){
+    const {test_log, correct_time} = this.props;
+    var c_hour = this.PrefixInteger(parseInt(correct_time/3600), 2);
+    var c_min = this.PrefixInteger(parseInt(correct_time%3600/60), 2);
+    var c_sec = this.PrefixInteger(correct_time%3600%60, 2);
     const data = Array.from(new Array(9)).map((_val, i) => ({
         icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
         text: `name${i}`,
     }));
     return (
-        <Grid data={data} hasLine={false} square={true}
+        <Grid data={data} hasLine={false} onClick={e => }
             columnNum={5}
             renderItem={(dataItem,i) => (
               <svg width="75px" height="75px" version="1.1"
