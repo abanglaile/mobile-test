@@ -299,7 +299,9 @@ class Question extends React.Component {
   }
 
   renderFooter(){
-    const {exindex, test_log} = this.props;
+
+    const {exindex, test_log,record,exercise} = this.props;
+    const {exercise_state} = test_log[exindex];
     if(test_log[exindex].answer_test){
       return (
         <div style={{
