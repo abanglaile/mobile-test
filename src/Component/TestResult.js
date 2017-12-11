@@ -1,7 +1,7 @@
 import React from 'react';
 import *as action from '../Action/';
 import {connect} from 'react-redux';
-import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal } from 'antd-mobile';
+import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal, Grid} from 'antd-mobile';
 import { Progress } from 'antd';
 
 import Tex from './renderer.js';
@@ -102,6 +102,26 @@ class TestResult extends React.Component {
       );
   }
 
+  renderExerciseList2(){
+    const data = Array.from(new Array(9)).map((_val, i) => ({
+        icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
+        text: `name${i}`,
+    }));
+    return (
+        <Grid data={data} hasLine={false} square={true}
+            columnNum={5}
+            renderItem={(dataItem,i) => (
+              <svg width="75px" height="75px" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg">
+
+                <circle cx="50%" cy="50%" r="20%" stroke="blue" fill="white" />
+                <text dx="45%" dy="57%" fontSize="0.3rem" style={{fill: 'blue'}}>{i+1}</text>
+              </svg>
+            )} 
+        />
+      );
+  }
+
   render() {
     var {isFetching, correct, test_log} = this.props;
     correct = correct ? correct : 0;
@@ -115,7 +135,7 @@ class TestResult extends React.Component {
         />
         <Tabs defaultActiveKey="1">
           <TabPane tab="题目情况" key="1">
-            {this.renderExerciseList()}
+            {this.renderExerciseList2()}
           </TabPane>
           <TabPane tab="知识点" key="2">
             <List className="my-list">
