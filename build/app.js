@@ -17324,7 +17324,7 @@ webpackJsonp([0],[
 
 	var _TestResult2 = _interopRequireDefault(_TestResult);
 
-	var _KpTestResult = __webpack_require__(721);
+	var _KpTestResult = __webpack_require__(717);
 
 	var _KpTestResult2 = _interopRequireDefault(_KpTestResult);
 
@@ -17402,9 +17402,9 @@ webpackJsonp([0],[
 
 	var _css3 = __webpack_require__(418);
 
-	var _progress = __webpack_require__(421);
+	var _activityIndicator = __webpack_require__(421);
 
-	var _progress2 = _interopRequireDefault(_progress);
+	var _activityIndicator2 = _interopRequireDefault(_activityIndicator);
 
 	var _css4 = __webpack_require__(422);
 
@@ -17686,13 +17686,12 @@ webpackJsonp([0],[
 	        'div',
 	        { style: { margin: '30px 0 18px 0', fontSize: '0.3rem' } },
 	        _react2.default.createElement(_renderer2.default, { content: title }),
-	        _react2.default.createElement('img', { src: 'http://opgtvzbwx.bkt.clouddn.com/2_title_img', height: '3rem' }),
-	        ')',
-	        _react2.default.createElement(
+	        title_img_url ? _react2.default.createElement('img', { src: title_img_url, height: '3rem' }) : null,
+	        title_audio_url ? _react2.default.createElement(
 	          'audio',
-	          { src: 'http://opgtvzbwx.bkt.clouddn.com/2_title_audio', controls: 'controls' },
+	          { src: title_audio_url, controls: 'controls' },
 	          'Your browser does not support the audio element.'
-	        )
+	        ) : null
 	      );
 	    }
 	  }, {
@@ -17905,7 +17904,6 @@ webpackJsonp([0],[
 	        return _react2.default.createElement(
 	          'div',
 	          { style: {
-	              display: 'flex',
 	              position: 'fixed',
 	              bottom: '0',
 	              width: '100%',
@@ -17913,29 +17911,20 @@ webpackJsonp([0],[
 	              borderTop: "solid 1px #CCC"
 	            } },
 	          _react2.default.createElement(
-	            'div',
-	            { style: { float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%" } },
-	            _react2.default.createElement(
-	              'div',
-	              { 'aria-hidden': 'true', style: { fontSize: "0.3rem", color: "00AA00", marginBottom: "0.1rem" } },
-	              record.correct,
-	              ' / ',
-	              exercise.length
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              null,
-	              _react2.default.createElement(_progress2.default, { percent: record.correct / exercise.length * 100, position: 'normal' })
-	            )
-	          ),
-	          _react2.default.createElement(
 	            _button2.default,
-	            { type: 'primary' },
+	            { inline: true,
+	              style: { margin: '0.2rem 0.5rem 0 0.5rem' },
+	              type: 'primary',
+	              disabled: exindex == 0,
+	              onClick: function onClick(e) {
+	                return _this6.props.updateExindex(exindex - 1);
+	              }
+	            },
 	            '\u4E0A\u4E00\u9898'
 	          ),
 	          _react2.default.createElement(
 	            _button2.default,
-	            { style: { float: 'left', margin: '0.2rem 0 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
+	            { style: { margin: '0.2rem 0.5rem 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
 	              onClick: function onClick(e) {
 	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer);
 	              },
@@ -17944,7 +17933,14 @@ webpackJsonp([0],[
 	          ),
 	          _react2.default.createElement(
 	            _button2.default,
-	            { type: 'primary' },
+	            { inline: true,
+	              style: { margin: '0.2rem 0 0 0' },
+	              type: 'primary',
+	              disabled: exindex == exercise.length - 1,
+	              onClick: function onClick(e) {
+	                return _this6.props.updateExindex(exindex + 1);
+	              }
+	            },
 	            '\u4E0B\u4E00\u9898'
 	          )
 	        );
@@ -17959,7 +17955,8 @@ webpackJsonp([0],[
 	          exercise = _props8.exercise,
 	          exindex = _props8.exindex,
 	          test_log = _props8.test_log,
-	          record = _props8.record;
+	          record = _props8.record,
+	          isFetching = _props8.isFetching;
 
 	      console.log(exindex);
 	      var _exercise$exindex3 = exercise[exindex],
@@ -17982,13 +17979,24 @@ webpackJsonp([0],[
 	      //   </div>
 	      */
 
-	      return _react2.default.createElement(
+	      return isFetching ? _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_activityIndicator2.default, { animating: isFetching })
+	      ) : _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(_navBar2.default, {
 	          mode: 'light',
-	          onLeftClick: function onLeftClick() {
-	            return console.log('onLeftClick');
+	          icon: _react2.default.createElement(_icon2.default, { type: 'cross' }),
+	          onLeftClick: exindex > 0 ? function () {
+	            return alert('退出练习？', '退出后将不保存本次练习记录', [{ text: '取消', onPress: function onPress() {
+	                return console.log('cancel');
+	              } }, { text: '退出练习', onPress: function onPress() {
+	                return _this7.props.router.push("/mobile-test/mytest");
+	              } }]);
+	          } : function () {
+	            return _this7.props.router.push("/mobile-test/mytest");
 	          },
 	          rightContent: [_react2.default.createElement(
 	            _button2.default,
@@ -18028,7 +18036,8 @@ webpackJsonp([0],[
 	      record = test_state.record,
 	      exercise_st = test_state.exercise_st,
 	      start_time = test_state.start_time,
-	      answer_test = test_state.answer_test;
+	      answer_test = test_state.answer_test,
+	      isFetching = test_state.isFetching;
 
 	  return {
 	    //整个测试以同一个开始时间
@@ -18040,7 +18049,8 @@ webpackJsonp([0],[
 	    test_log: test_log,
 	    modalOpen: modalOpen,
 	    record: record,
-	    answer_test: answer_test
+	    answer_test: answer_test,
+	    isFetching: isFetching
 	  };
 	}, action)(Question);
 
@@ -20994,7 +21004,7 @@ webpackJsonp([0],[
 
 
 	// module
-	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-progress-outer {\n  background-color: #ddd;\n  display: block;\n}\n.am-progress-fixed-outer {\n  position: fixed;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 2000;\n}\n.am-progress-hide-outer {\n  background-color: transparent;\n}\n.am-progress-bar {\n  border: 0.04rem solid #108ee9;\n  -webkit-transition: all 0.3s linear 0s;\n  transition: all 0.3s linear 0s;\n}\n", ""]);
+	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-activity-indicator {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  z-index: 99;\n}\n.am-activity-indicator-spinner {\n  display: inline-block;\n  width: 0.4rem;\n  height: 0.4rem;\n  background-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2259.75%22%20height%3D%2260.25%22%20viewBox%3D%220%20-2%2059.75%2060.25%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M29.691-.527c-15.648%200-28.333%2012.685-28.333%2028.333s12.685%2028.333%2028.333%2028.333c15.648%200%2028.333-12.685%2028.333-28.333S45.339-.527%2029.691-.527zm.184%2053.75c-14.037%200-25.417-11.379-25.417-25.417S15.838%202.39%2029.875%202.39s25.417%2011.379%2025.417%2025.417-11.38%2025.416-25.417%2025.416z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23108ee9%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-miterlimit%3D%2210%22%20d%3D%22M56.587%2029.766c.369-7.438-1.658-14.699-6.393-19.552%22%2F%3E%3C%2Fsvg%3E\");\n  background-position: 50%;\n  background-size: 100%;\n  background-repeat: no-repeat;\n  -webkit-animation: spinner-anime 1s linear infinite;\n          animation: spinner-anime 1s linear infinite;\n}\n.am-activity-indicator-tip {\n  font-size: 0.28rem;\n  margin-left: 0.16rem;\n  color: #000;\n  opacity: 0.4;\n}\n.am-activity-indicator.am-activity-indicator-toast {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-align: center;\n  z-index: 1999;\n}\n.am-activity-indicator.am-activity-indicator-toast .am-activity-indicator-spinner {\n  margin: 0;\n}\n.am-activity-indicator.am-activity-indicator-toast .am-activity-indicator-toast {\n  display: inline-block;\n  position: relative;\n  top: 0.08rem;\n}\n.am-activity-indicator-content {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  padding: 0.3rem 0.3rem;\n  border-radius: 0.14rem;\n  background-clip: padding-box;\n  color: #fff;\n  background-color: rgba(58, 58, 58, 0.9);\n  font-size: 0.3rem;\n  line-height: 0.4rem;\n}\n.am-activity-indicator-spinner-lg {\n  width: 0.64rem;\n  height: 0.64rem;\n}\n@-webkit-keyframes spinner-anime {\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg);\n  }\n}\n@keyframes spinner-anime {\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg);\n  }\n}\n", ""]);
 
 	// exports
 
@@ -21004,41 +21014,50 @@ webpackJsonp([0],[
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(299);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(318);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(319);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(373);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
-	var _classnames=__webpack_require__(381);var _classnames2=_interopRequireDefault(_classnames);
-	var _objectAssign=__webpack_require__(3);var _objectAssign2=_interopRequireDefault(_objectAssign);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
-	Progress=function(_React$Component){(0,_inherits3["default"])(Progress,_React$Component);function Progress(){(0,_classCallCheck3["default"])(this,Progress);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}Progress.prototype.
-	componentWillReceiveProps=function componentWillReceiveProps(){
-	this.noAppearTransition=true;
-	};Progress.prototype.
-	componentDidMount=function componentDidMount(){var _this2=this;
-	if(this.props.appearTransition){
-	setTimeout(function(){
-	_this2.refs.bar.style.width=_this2.props.percent+'%';
-	},10);
+	var _classnames=__webpack_require__(381);var _classnames2=_interopRequireDefault(_classnames);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
+	ActivityIndicator=function(_React$Component){(0,_inherits3["default"])(ActivityIndicator,_React$Component);function ActivityIndicator(){(0,_classCallCheck3["default"])(this,ActivityIndicator);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}ActivityIndicator.prototype.
+	render=function render(){var _classNames,_classNames2;var _props=
+	this.props,prefixCls=_props.prefixCls,className=_props.className,animating=_props.animating,toast=_props.toast,size=_props.size,color=_props.color,text=_props.text;
+	var wrapClass=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,''+
+	prefixCls,true),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-lg',size==='large'),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-sm',size==='small'),(0,_defineProperty3["default"])(_classNames,
+	className,!!className),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-toast',!!toast),_classNames));
+
+	var spinnerClass=(0,_classnames2["default"])((_classNames2={},(0,_defineProperty3["default"])(_classNames2,
+	prefixCls+'-spinner',true),(0,_defineProperty3["default"])(_classNames2,
+	prefixCls+'-spinner-lg',!!toast||size==='large'),(0,_defineProperty3["default"])(_classNames2,
+	prefixCls+'-spinner-white',!!toast||color==='white'),_classNames2));
+
+	if(animating){
+	if(toast){
+	return _react2["default"].createElement('div',{className:wrapClass},
+	_react2["default"].createElement('div',{className:prefixCls+'-content'},
+	_react2["default"].createElement('span',{className:spinnerClass}),
+	text&&_react2["default"].createElement('span',{className:prefixCls+'-toast'},text)));
+
+
+	}else
+	{
+	return _react2["default"].createElement('div',{className:wrapClass},
+	_react2["default"].createElement('span',{className:spinnerClass}),
+	text&&_react2["default"].createElement('span',{className:prefixCls+'-tip'},text));
+
 	}
-	};Progress.prototype.
-	render=function render(){var _classNames;var _props=
-	this.props,prefixCls=_props.prefixCls,position=_props.position,unfilled=_props.unfilled,_props$style=_props.style,style=_props$style===undefined?{}:_props$style;
-	var percentStyle={
-	width:this.noAppearTransition||!this.props.appearTransition?this.props.percent+'%':0,
-	height:0};
+	}else
+	{
+	return null;
+	}
+	};return ActivityIndicator;}(_react2["default"].Component);exports["default"]=ActivityIndicator;
 
-	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-outer',true),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-fixed-outer',position==='fixed'),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-hide-outer',unfilled==='hide'),_classNames));
-
-	return _react2["default"].createElement('div',{className:wrapCls},
-	_react2["default"].createElement('div',{ref:'bar',className:prefixCls+'-bar',style:(0,_objectAssign2["default"])({},style,percentStyle)}));
-
-	};return Progress;}(_react2["default"].Component);exports["default"]=Progress;
-
-	Progress.defaultProps={
-	prefixCls:'am-progress',
-	percent:0,
-	position:'fixed',
-	unfilled:'show',
-	appearTransition:false};module.exports=exports['default'];
+	ActivityIndicator.defaultProps={
+	prefixCls:'am-activity-indicator',
+	animating:true,
+	size:'small',
+	color:'gray',
+	panelColor:'rgba(34,34,34,0.6)',
+	toast:false};module.exports=exports['default'];
 
 /***/ },
 /* 422 */
@@ -62154,9 +62173,9 @@ webpackJsonp([0],[
 	  value: true
 	});
 
-	var _css = __webpack_require__(699);
+	var _css = __webpack_require__(418);
 
-	var _activityIndicator = __webpack_require__(702);
+	var _activityIndicator = __webpack_require__(421);
 
 	var _activityIndicator2 = _interopRequireDefault(_activityIndicator);
 
@@ -62184,9 +62203,9 @@ webpackJsonp([0],[
 
 	var _modal2 = _interopRequireDefault(_modal);
 
-	var _css6 = __webpack_require__(703);
+	var _css6 = __webpack_require__(699);
 
-	var _tabs = __webpack_require__(706);
+	var _tabs = __webpack_require__(702);
 
 	var _tabs2 = _interopRequireDefault(_tabs);
 
@@ -62361,12 +62380,45 @@ webpackJsonp([0],[
 	      );
 	    }
 	  }, {
+	    key: 'renderExerciseList2',
+	    value: function renderExerciseList2() {
+	      var _props4 = this.props,
+	          test_log = _props4.test_log,
+	          correct_time = _props4.correct_time;
+
+	      var c_hour = this.PrefixInteger(parseInt(correct_time / 3600), 2);
+	      var c_min = this.PrefixInteger(parseInt(correct_time % 3600 / 60), 2);
+	      var c_sec = this.PrefixInteger(correct_time % 3600 % 60, 2);
+	      var data = Array.from(new Array(9)).map(function (_val, i) {
+	        return {
+	          icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
+	          text: 'name' + i
+	        };
+	      });
+	      return _react2.default.createElement(Grid, { data: data, hasLine: false,
+	        columnNum: 5,
+	        renderItem: function renderItem(dataItem, i) {
+	          return _react2.default.createElement(
+	            'svg',
+	            { width: '75px', height: '75px', version: '1.1',
+	              xmlns: 'http://www.w3.org/2000/svg' },
+	            _react2.default.createElement('circle', { cx: '50%', cy: '50%', r: '20%', stroke: 'blue', fill: 'white' }),
+	            _react2.default.createElement(
+	              'text',
+	              { dx: '45%', dy: '57%', fontSize: '0.3rem', style: { fill: 'blue' } },
+	              i + 1
+	            )
+	          );
+	        }
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _props4 = this.props,
-	          isFetching = _props4.isFetching,
-	          correct = _props4.correct,
-	          test_log = _props4.test_log;
+	      var _props5 = this.props,
+	          isFetching = _props5.isFetching,
+	          correct = _props5.correct,
+	          test_log = _props5.test_log;
 
 	      correct = correct ? correct : 0;
 	      console.log(correct);
@@ -62486,7 +62538,7 @@ webpackJsonp([0],[
 
 
 	// module
-	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-activity-indicator {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  z-index: 99;\n}\n.am-activity-indicator-spinner {\n  display: inline-block;\n  width: 0.4rem;\n  height: 0.4rem;\n  background-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2259.75%22%20height%3D%2260.25%22%20viewBox%3D%220%20-2%2059.75%2060.25%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M29.691-.527c-15.648%200-28.333%2012.685-28.333%2028.333s12.685%2028.333%2028.333%2028.333c15.648%200%2028.333-12.685%2028.333-28.333S45.339-.527%2029.691-.527zm.184%2053.75c-14.037%200-25.417-11.379-25.417-25.417S15.838%202.39%2029.875%202.39s25.417%2011.379%2025.417%2025.417-11.38%2025.416-25.417%2025.416z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23108ee9%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-miterlimit%3D%2210%22%20d%3D%22M56.587%2029.766c.369-7.438-1.658-14.699-6.393-19.552%22%2F%3E%3C%2Fsvg%3E\");\n  background-position: 50%;\n  background-size: 100%;\n  background-repeat: no-repeat;\n  -webkit-animation: spinner-anime 1s linear infinite;\n          animation: spinner-anime 1s linear infinite;\n}\n.am-activity-indicator-tip {\n  font-size: 0.28rem;\n  margin-left: 0.16rem;\n  color: #000;\n  opacity: 0.4;\n}\n.am-activity-indicator.am-activity-indicator-toast {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  text-align: center;\n  z-index: 1999;\n}\n.am-activity-indicator.am-activity-indicator-toast .am-activity-indicator-spinner {\n  margin: 0;\n}\n.am-activity-indicator.am-activity-indicator-toast .am-activity-indicator-toast {\n  display: inline-block;\n  position: relative;\n  top: 0.08rem;\n}\n.am-activity-indicator-content {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  padding: 0.3rem 0.3rem;\n  border-radius: 0.14rem;\n  background-clip: padding-box;\n  color: #fff;\n  background-color: rgba(58, 58, 58, 0.9);\n  font-size: 0.3rem;\n  line-height: 0.4rem;\n}\n.am-activity-indicator-spinner-lg {\n  width: 0.64rem;\n  height: 0.64rem;\n}\n@-webkit-keyframes spinner-anime {\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg);\n  }\n}\n@keyframes spinner-anime {\n  100% {\n    -webkit-transform: rotate(360deg);\n            transform: rotate(360deg);\n  }\n}\n", ""]);
+	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-tabs {\n  overflow: hidden;\n}\n.am-tabs-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  position: relative;\n}\n.am-tabs-bar .am-tabs-prevpage:before {\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  left: 0;\n  display: block;\n  width: 1.18rem;\n  height: 100%;\n  content: ' ';\n  z-index: 1000;\n  background: #FFF;\n  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#ffffff), to(rgba(255, 255, 255, 0)));\n  background: -o-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));\n}\n.am-tabs-bar .am-tabs-nextpage:after {\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  right: 0;\n  display: block;\n  width: 1.18rem;\n  height: 100%;\n  content: ' ';\n  z-index: 1000;\n  background: #FFF;\n  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgba(255, 255, 255, 0)), to(#ffffff));\n  background: -o-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);\n}\n.am-tabs-bar .am-tabs-nav-swipe-container {\n  width: 100%;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe {\n  position: relative;\n  left: 0;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe .am-tabs-nav {\n  width: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe .am-tabs-nav .am-tabs-tab {\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 20%;\n          flex: 0 0 20%;\n}\n.am-tabs-bar .am-tabs-tab {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  border-bottom: 1PX solid #ddd;\n  font-size: 0.3rem;\n  height: 0.87rem;\n  line-height: 0.87rem;\n  color: #000;\n  background-color: #fff;\n  box-sizing: border-box;\n}\n.am-tabs-bar .am-tabs-tab-active {\n  color: #108ee9;\n}\n.am-tabs-ink-bar {\n  position: absolute;\n  bottom: 0;\n  height: 0.04rem;\n  background-color: #108ee9;\n}\n.am-tabs-ink-bar-animated {\n  -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1), -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n}\n.am-tabs.am-tabs-bottom .am-tabs-ink-bar {\n  bottom: auto;\n  top: 0;\n}\n.am-tabs.am-tabs-bottom .am-tabs-tab {\n  border-top: 1PX solid #ddd;\n  border-bottom: 0;\n}\n.am-tabs-content {\n  zoom: 1;\n}\n.am-tabs-content .am-tabs-tabpane {\n  overflow: auto;\n}\n.am-tabs-content-animated {\n  -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1), -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  will-change: transform;\n}\n.am-tabs-content-animated .am-tabs-tabpane {\n  box-sizing: border-box;\n  width: 100%;\n  -ms-flex-negative: 0;\n      flex-shrink: 0;\n}\n.am-tabs-content-no-animated .am-tabs-tabpane-inactive {\n  display: none;\n}\n.am-tabs .am-tabs-tabpane-inactive {\n  height: 0;\n  overflow: visible;\n}\n", ""]);
 
 	// exports
 
@@ -62495,109 +62547,12 @@ webpackJsonp([0],[
 /* 702 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(299);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(318);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(319);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(373);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
-	var _classnames=__webpack_require__(381);var _classnames2=_interopRequireDefault(_classnames);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
-	ActivityIndicator=function(_React$Component){(0,_inherits3["default"])(ActivityIndicator,_React$Component);function ActivityIndicator(){(0,_classCallCheck3["default"])(this,ActivityIndicator);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}ActivityIndicator.prototype.
-	render=function render(){var _classNames,_classNames2;var _props=
-	this.props,prefixCls=_props.prefixCls,className=_props.className,animating=_props.animating,toast=_props.toast,size=_props.size,color=_props.color,text=_props.text;
-	var wrapClass=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,''+
-	prefixCls,true),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-lg',size==='large'),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-sm',size==='small'),(0,_defineProperty3["default"])(_classNames,
-	className,!!className),(0,_defineProperty3["default"])(_classNames,
-	prefixCls+'-toast',!!toast),_classNames));
-
-	var spinnerClass=(0,_classnames2["default"])((_classNames2={},(0,_defineProperty3["default"])(_classNames2,
-	prefixCls+'-spinner',true),(0,_defineProperty3["default"])(_classNames2,
-	prefixCls+'-spinner-lg',!!toast||size==='large'),(0,_defineProperty3["default"])(_classNames2,
-	prefixCls+'-spinner-white',!!toast||color==='white'),_classNames2));
-
-	if(animating){
-	if(toast){
-	return _react2["default"].createElement('div',{className:wrapClass},
-	_react2["default"].createElement('div',{className:prefixCls+'-content'},
-	_react2["default"].createElement('span',{className:spinnerClass}),
-	text&&_react2["default"].createElement('span',{className:prefixCls+'-toast'},text)));
-
-
-	}else
-	{
-	return _react2["default"].createElement('div',{className:wrapClass},
-	_react2["default"].createElement('span',{className:spinnerClass}),
-	text&&_react2["default"].createElement('span',{className:prefixCls+'-tip'},text));
-
-	}
-	}else
-	{
-	return null;
-	}
-	};return ActivityIndicator;}(_react2["default"].Component);exports["default"]=ActivityIndicator;
-
-	ActivityIndicator.defaultProps={
-	prefixCls:'am-activity-indicator',
-	animating:true,
-	size:'small',
-	color:'gray',
-	panelColor:'rgba(34,34,34,0.6)',
-	toast:false};module.exports=exports['default'];
-
-/***/ },
-/* 703 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';__webpack_require__(289);
-	__webpack_require__(704);
-
-/***/ },
-/* 704 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(705);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(293)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css", function() {
-				var newContent = require("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 705 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(292)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-tabs {\n  overflow: hidden;\n}\n.am-tabs-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  position: relative;\n}\n.am-tabs-bar .am-tabs-prevpage:before {\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  left: 0;\n  display: block;\n  width: 1.18rem;\n  height: 100%;\n  content: ' ';\n  z-index: 1000;\n  background: #FFF;\n  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#ffffff), to(rgba(255, 255, 255, 0)));\n  background: -o-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));\n}\n.am-tabs-bar .am-tabs-nextpage:after {\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  right: 0;\n  display: block;\n  width: 1.18rem;\n  height: 100%;\n  content: ' ';\n  z-index: 1000;\n  background: #FFF;\n  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgba(255, 255, 255, 0)), to(#ffffff));\n  background: -o-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);\n}\n.am-tabs-bar .am-tabs-nav-swipe-container {\n  width: 100%;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe {\n  position: relative;\n  left: 0;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe .am-tabs-nav {\n  width: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n}\n.am-tabs-bar .am-tabs-nav-swipe-container .am-tabs-nav-swipe .am-tabs-nav .am-tabs-tab {\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-flex: 0;\n      -ms-flex: 0 0 20%;\n          flex: 0 0 20%;\n}\n.am-tabs-bar .am-tabs-tab {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  border-bottom: 1PX solid #ddd;\n  font-size: 0.3rem;\n  height: 0.87rem;\n  line-height: 0.87rem;\n  color: #000;\n  background-color: #fff;\n  box-sizing: border-box;\n}\n.am-tabs-bar .am-tabs-tab-active {\n  color: #108ee9;\n}\n.am-tabs-ink-bar {\n  position: absolute;\n  bottom: 0;\n  height: 0.04rem;\n  background-color: #108ee9;\n}\n.am-tabs-ink-bar-animated {\n  -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1), -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n}\n.am-tabs.am-tabs-bottom .am-tabs-ink-bar {\n  bottom: auto;\n  top: 0;\n}\n.am-tabs.am-tabs-bottom .am-tabs-tab {\n  border-top: 1PX solid #ddd;\n  border-bottom: 0;\n}\n.am-tabs-content {\n  zoom: 1;\n}\n.am-tabs-content .am-tabs-tabpane {\n  overflow: auto;\n}\n.am-tabs-content-animated {\n  -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1), -webkit-transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  will-change: transform;\n}\n.am-tabs-content-animated .am-tabs-tabpane {\n  box-sizing: border-box;\n  width: 100%;\n  -ms-flex-negative: 0;\n      flex-shrink: 0;\n}\n.am-tabs-content-no-animated .am-tabs-tabpane-inactive {\n  display: none;\n}\n.am-tabs .am-tabs-tabpane-inactive {\n  height: 0;\n  overflow: visible;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 706 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _extends2=__webpack_require__(389);var _extends3=_interopRequireDefault(_extends2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
-	var _rcTabs=__webpack_require__(707);var _rcTabs2=_interopRequireDefault(_rcTabs);
-	var _SwipeableTabContent=__webpack_require__(711);var _SwipeableTabContent2=_interopRequireDefault(_SwipeableTabContent);
-	var _TabContent=__webpack_require__(712);var _TabContent2=_interopRequireDefault(_TabContent);
-	var _InkTabBar=__webpack_require__(716);var _InkTabBar2=_interopRequireDefault(_InkTabBar);
-	var _SwipeableInkTabBar=__webpack_require__(719);var _SwipeableInkTabBar2=_interopRequireDefault(_SwipeableInkTabBar);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}
+	var _rcTabs=__webpack_require__(703);var _rcTabs2=_interopRequireDefault(_rcTabs);
+	var _SwipeableTabContent=__webpack_require__(707);var _SwipeableTabContent2=_interopRequireDefault(_SwipeableTabContent);
+	var _TabContent=__webpack_require__(708);var _TabContent2=_interopRequireDefault(_TabContent);
+	var _InkTabBar=__webpack_require__(712);var _InkTabBar2=_interopRequireDefault(_InkTabBar);
+	var _SwipeableInkTabBar=__webpack_require__(715);var _SwipeableInkTabBar2=_interopRequireDefault(_SwipeableInkTabBar);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}
 	var Tabs=_react2["default"].createClass({displayName:'Tabs',
 	statics:{
 	TabPane:_rcTabs.TabPane},
@@ -62634,7 +62589,7 @@ webpackJsonp([0],[
 	Tabs;module.exports=exports['default'];
 
 /***/ },
-/* 707 */
+/* 703 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62644,11 +62599,11 @@ webpackJsonp([0],[
 	});
 	exports.TabPane = exports["default"] = undefined;
 
-	var _Tabs = __webpack_require__(708);
+	var _Tabs = __webpack_require__(704);
 
 	var _Tabs2 = _interopRequireDefault(_Tabs);
 
-	var _TabPane2 = __webpack_require__(710);
+	var _TabPane2 = __webpack_require__(706);
 
 	var _TabPane3 = _interopRequireDefault(_TabPane2);
 
@@ -62658,7 +62613,7 @@ webpackJsonp([0],[
 	exports.TabPane = _TabPane3["default"];
 
 /***/ },
-/* 708 */
+/* 704 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62675,11 +62630,11 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _KeyCode = __webpack_require__(709);
+	var _KeyCode = __webpack_require__(705);
 
 	var _KeyCode2 = _interopRequireDefault(_KeyCode);
 
-	var _TabPane = __webpack_require__(710);
+	var _TabPane = __webpack_require__(706);
 
 	var _TabPane2 = _interopRequireDefault(_TabPane);
 
@@ -62849,7 +62804,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 709 */
+/* 705 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -62877,7 +62832,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 710 */
+/* 706 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62944,7 +62899,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 711 */
+/* 707 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62957,7 +62912,7 @@ webpackJsonp([0],[
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _TabContent = __webpack_require__(712);
+	var _TabContent = __webpack_require__(708);
 
 	var _TabContent2 = _interopRequireDefault(_TabContent);
 
@@ -62965,7 +62920,7 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactHammerjs = __webpack_require__(714);
+	var _reactHammerjs = __webpack_require__(710);
 
 	var _reactHammerjs2 = _interopRequireDefault(_reactHammerjs);
 
@@ -62973,7 +62928,7 @@ webpackJsonp([0],[
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _utils = __webpack_require__(713);
+	var _utils = __webpack_require__(709);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -63148,7 +63103,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 712 */
+/* 708 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63173,7 +63128,7 @@ webpackJsonp([0],[
 
 	var _classnames3 = _interopRequireDefault(_classnames2);
 
-	var _utils = __webpack_require__(713);
+	var _utils = __webpack_require__(709);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -63254,7 +63209,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 713 */
+/* 709 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -63358,7 +63313,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 714 */
+/* 710 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -63366,7 +63321,7 @@ webpackJsonp([0],[
 
 	// require('hammerjs') when in a browser. This is safe because Hammer is only
 	// invoked in componentDidMount, which is not executed on the server.
-	var Hammer = (typeof window !== 'undefined') ? __webpack_require__(715) : undefined;
+	var Hammer = (typeof window !== 'undefined') ? __webpack_require__(711) : undefined;
 
 	var privateProps = {
 		children: true,
@@ -63499,7 +63454,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 715 */
+/* 711 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -66148,7 +66103,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 716 */
+/* 712 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66161,11 +66116,11 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _InkTabBarMixin = __webpack_require__(717);
+	var _InkTabBarMixin = __webpack_require__(713);
 
 	var _InkTabBarMixin2 = _interopRequireDefault(_InkTabBarMixin);
 
-	var _TabBarMixin = __webpack_require__(718);
+	var _TabBarMixin = __webpack_require__(714);
 
 	var _TabBarMixin2 = _interopRequireDefault(_TabBarMixin);
 
@@ -66186,7 +66141,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 717 */
+/* 713 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66201,7 +66156,7 @@ webpackJsonp([0],[
 
 	exports.getScroll = getScroll;
 
-	var _utils = __webpack_require__(713);
+	var _utils = __webpack_require__(709);
 
 	var _react = __webpack_require__(1);
 
@@ -66326,7 +66281,7 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 718 */
+/* 714 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66446,7 +66401,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 719 */
+/* 715 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66463,15 +66418,15 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _InkTabBarMixin = __webpack_require__(717);
+	var _InkTabBarMixin = __webpack_require__(713);
 
 	var _InkTabBarMixin2 = _interopRequireDefault(_InkTabBarMixin);
 
-	var _SwipeableTabBarMixin = __webpack_require__(720);
+	var _SwipeableTabBarMixin = __webpack_require__(716);
 
 	var _SwipeableTabBarMixin2 = _interopRequireDefault(_SwipeableTabBarMixin);
 
-	var _TabBarMixin = __webpack_require__(718);
+	var _TabBarMixin = __webpack_require__(714);
 
 	var _TabBarMixin2 = _interopRequireDefault(_TabBarMixin);
 
@@ -66544,7 +66499,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 720 */
+/* 716 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66569,7 +66524,7 @@ webpackJsonp([0],[
 
 	var _classnames4 = _interopRequireDefault(_classnames3);
 
-	var _reactHammerjs = __webpack_require__(714);
+	var _reactHammerjs = __webpack_require__(710);
 
 	var _reactHammerjs2 = _interopRequireDefault(_reactHammerjs);
 
@@ -66577,7 +66532,7 @@ webpackJsonp([0],[
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _utils = __webpack_require__(713);
+	var _utils = __webpack_require__(709);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -66778,7 +66733,7 @@ webpackJsonp([0],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 721 */
+/* 717 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -66799,9 +66754,9 @@ webpackJsonp([0],[
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _css3 = __webpack_require__(418);
+	var _css3 = __webpack_require__(718);
 
-	var _progress = __webpack_require__(421);
+	var _progress = __webpack_require__(721);
 
 	var _progress2 = _interopRequireDefault(_progress);
 
@@ -67013,6 +66968,94 @@ webpackJsonp([0],[
 	    delta_student_rating: delta_result.delta_student_rating
 	  };
 	}, action)(KpTestResult);
+
+/***/ },
+/* 718 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';__webpack_require__(289);
+	__webpack_require__(719);
+
+/***/ },
+/* 719 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(720);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(293)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css", function() {
+				var newContent = require("!!../../../../css-loader/index.js!../../../../postcss-loader/lib/index.js!./index.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 720 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(292)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".hairline-remove-right-bottom {\n  border-bottom: 0;\n}\n.hairline-remove-right-bottom:after {\n  display: none;\n}\n.hairline-remove-right-bottom-bak:after {\n  display: none;\n}\n.hairline-remove-left-top:before {\n  display: none;\n}\n.am-progress-outer {\n  background-color: #ddd;\n  display: block;\n}\n.am-progress-fixed-outer {\n  position: fixed;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 2000;\n}\n.am-progress-hide-outer {\n  background-color: transparent;\n}\n.am-progress-bar {\n  border: 0.04rem solid #108ee9;\n  -webkit-transition: all 0.3s linear 0s;\n  transition: all 0.3s linear 0s;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 721 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=undefined;var _defineProperty2=__webpack_require__(299);var _defineProperty3=_interopRequireDefault(_defineProperty2);var _classCallCheck2=__webpack_require__(318);var _classCallCheck3=_interopRequireDefault(_classCallCheck2);var _possibleConstructorReturn2=__webpack_require__(319);var _possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2);var _inherits2=__webpack_require__(373);var _inherits3=_interopRequireDefault(_inherits2);var _react=__webpack_require__(1);var _react2=_interopRequireDefault(_react);
+	var _classnames=__webpack_require__(381);var _classnames2=_interopRequireDefault(_classnames);
+	var _objectAssign=__webpack_require__(3);var _objectAssign2=_interopRequireDefault(_objectAssign);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}var
+	Progress=function(_React$Component){(0,_inherits3["default"])(Progress,_React$Component);function Progress(){(0,_classCallCheck3["default"])(this,Progress);return(0,_possibleConstructorReturn3["default"])(this,_React$Component.apply(this,arguments));}Progress.prototype.
+	componentWillReceiveProps=function componentWillReceiveProps(){
+	this.noAppearTransition=true;
+	};Progress.prototype.
+	componentDidMount=function componentDidMount(){var _this2=this;
+	if(this.props.appearTransition){
+	setTimeout(function(){
+	_this2.refs.bar.style.width=_this2.props.percent+'%';
+	},10);
+	}
+	};Progress.prototype.
+	render=function render(){var _classNames;var _props=
+	this.props,prefixCls=_props.prefixCls,position=_props.position,unfilled=_props.unfilled,_props$style=_props.style,style=_props$style===undefined?{}:_props$style;
+	var percentStyle={
+	width:this.noAppearTransition||!this.props.appearTransition?this.props.percent+'%':0,
+	height:0};
+
+	var wrapCls=(0,_classnames2["default"])((_classNames={},(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-outer',true),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-fixed-outer',position==='fixed'),(0,_defineProperty3["default"])(_classNames,
+	prefixCls+'-hide-outer',unfilled==='hide'),_classNames));
+
+	return _react2["default"].createElement('div',{className:wrapCls},
+	_react2["default"].createElement('div',{ref:'bar',className:prefixCls+'-bar',style:(0,_objectAssign2["default"])({},style,percentStyle)}));
+
+	};return Progress;}(_react2["default"].Component);exports["default"]=Progress;
+
+	Progress.defaultProps={
+	prefixCls:'am-progress',
+	percent:0,
+	position:'fixed',
+	unfilled:'show',
+	appearTransition:false};module.exports=exports['default'];
 
 /***/ },
 /* 722 */
@@ -67623,9 +67666,9 @@ webpackJsonp([0],[
 
 	var _whiteSpace2 = _interopRequireDefault(_whiteSpace);
 
-	var _css2 = __webpack_require__(699);
+	var _css2 = __webpack_require__(418);
 
-	var _activityIndicator = __webpack_require__(702);
+	var _activityIndicator = __webpack_require__(421);
 
 	var _activityIndicator2 = _interopRequireDefault(_activityIndicator);
 
@@ -67635,9 +67678,9 @@ webpackJsonp([0],[
 
 	var _list2 = _interopRequireDefault(_list);
 
-	var _css4 = __webpack_require__(703);
+	var _css4 = __webpack_require__(699);
 
-	var _tabs = __webpack_require__(706);
+	var _tabs = __webpack_require__(702);
 
 	var _tabs2 = _interopRequireDefault(_tabs);
 
@@ -68491,9 +68534,9 @@ webpackJsonp([0],[
 
 	var _inputItem2 = _interopRequireDefault(_inputItem);
 
-	var _css5 = __webpack_require__(699);
+	var _css5 = __webpack_require__(418);
 
-	var _activityIndicator = __webpack_require__(702);
+	var _activityIndicator = __webpack_require__(421);
 
 	var _activityIndicator2 = _interopRequireDefault(_activityIndicator);
 
@@ -68503,9 +68546,9 @@ webpackJsonp([0],[
 
 	var _list2 = _interopRequireDefault(_list);
 
-	var _css7 = __webpack_require__(703);
+	var _css7 = __webpack_require__(699);
 
-	var _tabs = __webpack_require__(706);
+	var _tabs = __webpack_require__(702);
 
 	var _tabs2 = _interopRequireDefault(_tabs);
 
@@ -68599,7 +68642,7 @@ webpackJsonp([0],[
 	        _react2.default.createElement(_activityIndicator2.default, { toast: true, animating: false }),
 	        _react2.default.createElement(
 	          _tabs2.default,
-	          { defaultActiveKey: '1' },
+	          { defaultActiveKey: '2' },
 	          _react2.default.createElement(
 	            TabPane,
 	            { tab: '\u6CE8\u518C', key: '1' },

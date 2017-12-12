@@ -50,7 +50,7 @@ class LoginView extends React.Component {
       </div>
       <ActivityIndicator toast animating={false} />
       
-      <Tabs defaultActiveKey="1">
+      <Tabs defaultActiveKey="2">
       <TabPane tab="注册" key="1">
         <List>
           <InputItem

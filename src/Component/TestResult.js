@@ -112,7 +112,7 @@ class TestResult extends React.Component {
         text: `name${i}`,
     }));
     return (
-        <Grid data={data} hasLine={false} onClick={e => }
+        <Grid data={data} hasLine={false} 
             columnNum={5}
             renderItem={(dataItem,i) => (
               <svg width="75px" height="75px" version="1.1"
