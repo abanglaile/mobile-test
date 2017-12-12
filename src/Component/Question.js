@@ -273,10 +273,10 @@ class Question extends React.Component {
           maskClosable={false}
           visible={modalOpen}
           footer={[{ 
-            text: '', 
+            text: 'Ok', 
             onPress: () => this.onContinue()}]}
-        >
-          {delta_tip}<br />
+        > 
+        天梯分: {delta_tip}<br />
       </Modal>
       ) 
   }

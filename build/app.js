@@ -17821,11 +17821,12 @@ webpackJsonp([0],[
 	          maskClosable: false,
 	          visible: modalOpen,
 	          footer: [{
-	            text: '',
+	            text: 'Ok',
 	            onPress: function onPress() {
 	              return _this4.onContinue();
 	            } }]
 	        },
+	        '\u5929\u68AF\u5206: ',
 	        delta_tip,
 	        _react2.default.createElement('br', null)
 	      );
