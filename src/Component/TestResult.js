@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import *as action from '../Action/';
 import {connect} from 'react-redux';
-import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal } from 'antd-mobile';
+import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal, Grid } from 'antd-mobile';
 import { Progress } from 'antd';
 
 import Tex from './renderer.js';
@@ -102,9 +102,14 @@ class TestResult extends React.Component {
       );
   }
 
+  jumpToExercise(i){
+    this.props.updateExindex(i);
+    this.props.router.push("/mobile-test/Question/");
+  }
+
   renderExerciseList2(){
     const {test_log, correct_time} = this.props;
-    var c_hour = this.PrefixInteger(parseInt(correct_time/3600), 2);
+    var c_hour =   this.PrefixInteger(parseInt(correct_time/3600), 2);
     var c_min = this.PrefixInteger(parseInt(correct_time%3600/60), 2);
     var c_sec = this.PrefixInteger(correct_time%3600%60, 2);
     const data = Array.from(new Array(9)).map((_val, i) => ({
@@ -112,7 +117,7 @@ class TestResult extends React.Component {
         text: `name${i}`,
     }));
     return (
-        <Grid data={data} hasLine={false} 
+        <Grid data={data} hasLine={false} onClick={(e, i) => this.jumpToExercise(i)}
             columnNum={5}
             renderItem={(dataItem,i) => (
               <svg width="75px" height="75px" version="1.1"
@@ -139,7 +144,7 @@ class TestResult extends React.Component {
         />
         <Tabs defaultActiveKey="1">
           <TabPane tab="题目情况" key="1">
-            {this.renderExerciseList()}
+            {this.renderExerciseList2()}
           </TabPane>
           <TabPane tab="知识点" key="2">
             <List className="my-list">
