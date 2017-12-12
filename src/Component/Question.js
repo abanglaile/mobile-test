@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { WingBlank, Flex, List, Checkbox, Button, Icon, Modal, Popup, Progress, NavBar} from 'antd-mobile';
+import { WingBlank, Flex, List, Checkbox, Button, Icon, Modal, Popup, Progress, NavBar,ActivityIndicator} from 'antd-mobile';
 import Tex from './renderer.js';
 import MathInput from '../../math-input/src/components/app.js'
 
@@ -167,10 +167,20 @@ class Question extends React.Component {
     return (
       <div style={{ margin: '30px 0 18px 0', fontSize: '0.3rem'}}>
         <Tex content={title} />
-        <img src="http://opgtvzbwx.bkt.clouddn.com/2_title_img" height="3rem" />)
-        <audio src="http://opgtvzbwx.bkt.clouddn.com/2_title_audio" controls="controls">
+        {
+          title_img_url? 
+          <img src={title_img_url} height="3rem" />
+          :
+          null
+        }
+        {
+          title_audio_url? 
+          <audio src={title_audio_url} controls="controls">
             Your browser does not support the audio element.
-        </audio>
+          </audio>
+          :
+          null
+        }
       </div>
     )
   }
@@ -299,7 +309,8 @@ class Question extends React.Component {
   }
 
   renderFooter(){
-    const {exindex, test_log} = this.props;
+    const {exindex, test_log,record,exercise} = this.props;
+    const { exercise_state} = test_log[exindex];
     if(test_log[exindex].answer_test){
       return (
         <div style={{
@@ -320,34 +331,43 @@ class Question extends React.Component {
     }else if(exercise_state < 0){
       return (
           <div style={{
-                  display: 'flex',
                   position: 'fixed',
                   bottom: '0',
                   width: '100%',
                   height: "1.2rem",
                   borderTop: "solid 1px #CCC",
                   }}>
-              <div style={{float: 'left', margin: "0.2rem 1rem 0 0.5rem", width: "40%"}}>
-                <div aria-hidden="true" style={{fontSize: "0.3rem", color: "00AA00", marginBottom:"0.1rem"}}>{record.correct} / {exercise.length}</div>
-                <div><Progress percent={record.correct/exercise.length * 100} position="normal" /></div>
-              </div>
-              <Button type="primary">上一题</Button>
-              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+              <Button inline 
+                style={{margin: '0.2rem 0.5rem 0 0.5rem'}} 
+                type="primary"
+                disabled = {exindex == 0}
+                onClick={e => this.props.updateExindex(exindex-1)}
+              >
+                上一题
+              </Button>
+              <Button style={{margin: '0.2rem 0.5rem 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
                 onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
                 type="primary" inline>
               提交答案
               </Button>
-              <Button type="primary">下一题</Button>
+              <Button inline 
+                style={{margin: '0.2rem 0 0 0'}} 
+                type="primary"
+                disabled = {exindex == exercise.length - 1}
+                onClick={e => this.props.updateExindex(exindex+1)}
+              >
+                下一题
+              </Button>
           </div>
       )
     }
   }
 
   render() {
-    const {exercise, exindex, test_log, record} = this.props;
+    const {exercise, exindex, test_log, record,isFetching} = this.props;
     console.log(exindex);
     const { title, options } = exercise[exindex];
-    
+
     /*
     // <div style={{ margin: '0 0.30rem', width: '1.6rem!important', margin: '0.18rem 0.18rem 0.18rem 0'}}>
     //     <Flex>
@@ -365,25 +385,38 @@ class Question extends React.Component {
     */
    
     return (
-    <div>
-      <NavBar
-      mode="light"
-        onLeftClick={() => console.log('onLeftClick')}
+      isFetching ?
+      <div>
+        <ActivityIndicator animating={isFetching} />
+      </div>
+      :
+      <div>
+        <NavBar
+        mode="light"
+        icon={<Icon type="cross" />}
+        onLeftClick={exindex > 0 ?
+          () => alert('退出练习？', '退出后将不保存本次练习记录', 
+          [
+            { text: '取消', onPress: () => console.log('cancel') },
+            { text: '退出练习', onPress: () => this.props.router.push("/mobile-test/mytest")},
+          ])
+          :
+          () => this.props.router.push("/mobile-test/mytest")
+        }
         rightContent={[
           <Button inline type="ghost" size="small" onClick={e => this.onPopup(e)}>{exindex + 1}</Button>,
         ]}
-      ></NavBar>
-      <WingBlank>
-      {this.renderBreakdown()}
-      <div style={{ margin: '30px 0 18px 0', fontSize: '0.3rem'}}>
-      	<Tex content={title} />
+        ></NavBar>
+        <WingBlank>
+        {this.renderBreakdown()}
+        <div style={{ margin: '30px 0 18px 0', fontSize: '0.3rem'}}>
+        	<Tex content={title} />
+        </div>
+        </WingBlank>
+        {this.renderAnswer()}
+        {this.renderFooter()}
+        {this.renderModal()}
       </div>
-      </WingBlank>
-      {this.renderAnswer()}
-      {this.renderFooter()}
-      {this.renderModal()}
-    </div>
-    
     );
   }
 }
@@ -391,7 +424,7 @@ class Question extends React.Component {
 export default connect(state => {
   const test_state = state.testData.toJS();
   console.log(test_state);
-  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test} = test_state;
+  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test , isFetching} = test_state;
   return {
     //整个测试以同一个开始时间
     start_time: start_time,
@@ -403,5 +436,6 @@ export default connect(state => {
     modalOpen: modalOpen,
     record: record,
     answer_test: answer_test,
+    isFetching : isFetching,
   }; 
 }, action)(Question);
