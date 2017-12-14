@@ -333,7 +333,7 @@ export const jumpNext = (answer_test) => {
         const blength = exercise[exindex].breakdown.length;
         if(!answer_test || exercise_state || blength == 1){
             var next = -1;
-            var i = exindex + 1;
+            var i = (exindex + 1)%exercise.length;
             while(i != exindex){
                 if(test_log[i].exercise_state < 0){
                     next = i;
@@ -387,6 +387,7 @@ export const jumpNext = (answer_test) => {
 export const updateAnswerTest = (exindex, answer_test) => {
     return {
         type: 'UPDATE_ANSWER_TEST',
+        exindex,
         answer_test: answer_test,
     }
 }
@@ -488,6 +489,13 @@ const checkAnswer = (exercise_type, log_answer) => {
             // if(userAnswer != exAnswer){
             //     result = 0;
             // }
+            break;
+        case 2:
+            for(var i = 0; i < log_answer.length; i++){
+                if(log_answer[i].correct != log_answer[i].select){
+                    return 0;
+                }
+            }
             break;
         default:
             break;
