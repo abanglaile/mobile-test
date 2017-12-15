@@ -1,7 +1,7 @@
 import React from 'react';
 // import Question from 'bundle-loader?lazy&name=Question!../Component/Question.js'
 import Question from '../Component/Question.js'
-import AnswerTest from '../Component/AnswerTest.js'
+import AnswerSheet from '../Component/AnswerSheet.js'
 import TestStatus from '../Component/TestStatus.js'
 import TestResult from '../Component/TestResult.js'
 import KpTestResult from '../Component/KpTestResult.js'
@@ -30,7 +30,7 @@ export default (
         <Route path="mytest" component={MyTest} />
         <Route path="Question" component={Question} />
 
-        <Route path="AnswerTest" component={AnswerTest} />
+        <Route path="AnswerSheet" component={AnswerSheet} />
         <Route path="TestStatus/:test_id" component={TestStatus} />
         <Route path="kpTestResult" component={KpTestResult} />
         <Route path="testResult/:test_id" component={TestResult} />

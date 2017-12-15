@@ -321,7 +321,7 @@ class Question extends React.Component {
                   height: "1.2rem",
                   borderTop: "solid 1px #CCC",
                   }}>
-              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}}
                 onClick={e => this.props.submitFeedBack(exindex)} 
                 type="primary" inline>
               提交反馈
@@ -404,7 +404,7 @@ class Question extends React.Component {
           () => this.props.router.push("/mobile-test/mytest")
         }
         rightContent={[
-          <Button inline type="ghost" size="small" onClick={e => this.onPopup(e)}>{exindex + 1}</Button>,
+          <Button inline type="ghost" size="small" onClick={e => this.props.router.push("/mobile-test/AnswerSheet")}>{exindex + 1}</Button>,
         ]}
         ></NavBar>
         <WingBlank>

@@ -20,6 +20,7 @@ class TestResult extends React.Component {
     const test_id = params.test_id;
     if(test_id){
       this.props.getTestResult(student_id, test_id);
+      this.props.getTestExercise(student_id, test_id);
     }else{
       alert("页面参数错误");
     }
@@ -57,13 +58,12 @@ class TestResult extends React.Component {
     const {test_kp} = this.props;
     //<Brief>{item.kpid}</Brief>
     return (
-        <List>
+        <List renderHeader={() => '知识点情况'} >
           {
             test_kp.map((item) => {
 
               return (
-                <Item arrow="horizontal"
-                  onClick={e => this.props.getExerciseSample(item.exercise_id)}
+                <Item
                   extra={item.kp_rating}>
                   {item.kpname}
                   
@@ -108,14 +108,8 @@ class TestResult extends React.Component {
   }
 
   renderExerciseList2(){
-    const {test_log, correct_time} = this.props;
-    var c_hour =   this.PrefixInteger(parseInt(correct_time/3600), 2);
-    var c_min = this.PrefixInteger(parseInt(correct_time%3600/60), 2);
-    var c_sec = this.PrefixInteger(correct_time%3600%60, 2);
-    const data = Array.from(new Array(9)).map((_val, i) => ({
-        icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
-        text: `name${i}`,
-    }));
+    const {test_log} = this.props;
+
     return (
         <Grid data={data} hasLine={false} onClick={(e, i) => this.jumpToExercise(i)}
             columnNum={5}
@@ -145,11 +139,12 @@ class TestResult extends React.Component {
         <Tabs defaultActiveKey="1">
           <TabPane tab="题目情况" key="1">
             {this.renderExerciseList2()}
-          </TabPane>
-          <TabPane tab="知识点" key="2">
             <List className="my-list">
               {this.renderKpList()}
             </List>
+          </TabPane>
+          <TabPane tab="知识点" key="2">
+            
           </TabPane>
         </Tabs>
         <div style={{
@@ -166,7 +161,7 @@ class TestResult extends React.Component {
             type="ghost" inline>
           返回测试列表
           </Button>
-      </div>
+        </div>
         <ActivityIndicator animating = {isFetching}/>
         {this.renderModal()}
       </div>
@@ -176,8 +171,10 @@ class TestResult extends React.Component {
 
 export default connect(state => {
   const test_state = state.testData.toJS();
-  const {test_log, test_kp, correct, isFetching, modalOpen, exercise_sample} = test_state;
+  const {test_log, test_kp, correct, isFetching, modalOpen, exercise, exindex} = test_state;
   return {
+    exindex: exindex,
+    exercise: exercise,
     test_log: test_log ? test_log : [],
     test_kp: test_kp ? test_kp : [],
     correct: correct ? correct : 0,

@@ -143,6 +143,9 @@ export const testData = (state = defaulatTestData, action = {}) => {
             return state.mergeDeep(Immutable.fromJS(newState));
             //console.log(newState.toJS());
             //return newState;
+            break;
+        case 'GET_TEST_EXERCISE_SUCCESS':
+            return state.set('exercise', Immutable.fromJS(action.json));
         case 'GET_TEST_RESULT_SUCCESS':
             console.log(action.json);
             return state.set('test_log', Immutable.fromJS(action.json.test_log))

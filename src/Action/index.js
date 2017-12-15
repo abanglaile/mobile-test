@@ -200,6 +200,14 @@ const getTestSuccess = (json, test_id) => {
   }
 }
 
+//获取测试数据成功
+const getTestExerciseSuccess = (json) => {
+  return {
+    type: 'GET_TEST_EXERCISE_SUCCESS',
+    json,
+  }
+}
+
 const getTestStatusSuccess = (json, test_id, isFinish) => {
     return {
         type: 'GET_TEST_STATUS_SUCCESS',
@@ -259,6 +267,21 @@ export const getMyChapter = (student_id, course_id) => {
         dispatch(getDataStart());
         return NetUtil.get(url, {student_id, course_id}, json => {
             dispatch(getChapterSuccess(json));
+        }, errors => {
+            console.log(errors);
+        });
+    }
+}
+
+//获取指定测试数据
+export const getTestExercise = (student_id, test_id) => {
+    let url = target + '/klmanager/getExerciseByTest';
+    console.log(student_id, test_id);
+    return dispatch => {
+        dispatch(getTestStart());
+        return NetUtil.get(url, {test_id, student_id}, json => {
+            console.log(json);
+            dispatch(getTestExerciseSuccess(json));
         }, errors => {
             console.log(errors);
         });
