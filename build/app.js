@@ -12917,7 +12917,7 @@ webpackJsonp([0],[
 	        breakdown = exercise.breakdown;
 
 	    var result = checkAnswer(exercise_type, log_answer);
-	    student_rating = 500;
+	    // student_rating = 500;
 
 	    //计算学生、题目得分
 	    var st_delta = elo_rating(student_rating, exercise_rating);
@@ -17885,7 +17885,8 @@ webpackJsonp([0],[
 	          exindex = _props7.exindex,
 	          test_log = _props7.test_log,
 	          record = _props7.record,
-	          exercise = _props7.exercise;
+	          exercise = _props7.exercise,
+	          student_rating = _props7.student_rating;
 	      var exercise_state = test_log[exindex].exercise_state;
 
 	      if (test_log[exindex].answer_test) {
@@ -17935,7 +17936,7 @@ webpackJsonp([0],[
 	            _button2.default,
 	            { style: { margin: '0.2rem 0.5rem 0 0' }, disabled: test_log[exindex].exercise_state >= 0,
 	              onClick: function onClick(e) {
-	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer);
+	                return _this6.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer, student_rating);
 	              },
 	              type: 'primary', inline: true },
 	            '\u63D0\u4EA4\u7B54\u6848'
@@ -18046,7 +18047,8 @@ webpackJsonp([0],[
 	      exercise_st = test_state.exercise_st,
 	      start_time = test_state.start_time,
 	      answer_test = test_state.answer_test,
-	      isFetching = test_state.isFetching;
+	      isFetching = test_state.isFetching,
+	      student_rating = test_state.student_rating;
 
 	  return {
 	    //整个测试以同一个开始时间
@@ -18057,6 +18059,7 @@ webpackJsonp([0],[
 	    exindex: exindex,
 	    test_log: test_log,
 	    modalOpen: modalOpen,
+	    student_rating: student_rating,
 	    record: record,
 	    answer_test: answer_test,
 	    isFetching: isFetching

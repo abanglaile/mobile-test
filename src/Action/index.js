@@ -533,7 +533,7 @@ export const breakdownSelectChange = (exindex, index) => {
 export const submitExerciseLog = (exercise, log_answer, student_rating) => {
     const {exercise_id, answer, exercise_type, exercise_rating, breakdown} = exercise;
     const result = checkAnswer(exercise_type, log_answer);
-    student_rating = 500;
+    // student_rating = 500;
 
     //计算学生、题目得分
     const st_delta = elo_rating(student_rating, exercise_rating);

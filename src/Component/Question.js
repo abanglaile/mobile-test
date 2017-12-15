@@ -273,7 +273,7 @@ class Question extends React.Component {
           maskClosable={false}
           visible={modalOpen}
           footer={[{ 
-            text: 'Ok', 
+            text: 'OK', 
             onPress: () => this.onContinue()}]}
         > 
         天梯分: {delta_tip}<br />
@@ -309,7 +309,7 @@ class Question extends React.Component {
   }
 
   renderFooter(){
-    const {exindex, test_log,record,exercise} = this.props;
+    const {exindex, test_log,record,exercise,student_rating} = this.props;
     const { exercise_state} = test_log[exindex];
     if(test_log[exindex].answer_test){
       return (
@@ -346,7 +346,7 @@ class Question extends React.Component {
                 上一题
               </Button>
               <Button style={{margin: '0.2rem 0.5rem 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
-                onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer)} 
+                onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer,student_rating)} 
                 type="primary" inline>
               提交答案
               </Button>
@@ -424,7 +424,7 @@ class Question extends React.Component {
 export default connect(state => {
   const test_state = state.testData.toJS();
   console.log(test_state);
-  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test , isFetching} = test_state;
+  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test , isFetching,student_rating} = test_state;
   return {
     //整个测试以同一个开始时间
     start_time: start_time,
@@ -434,6 +434,7 @@ export default connect(state => {
     exindex: exindex,
     test_log: test_log,
     modalOpen: modalOpen,
+    student_rating : student_rating,
     record: record,
     answer_test: answer_test,
     isFetching : isFetching,
