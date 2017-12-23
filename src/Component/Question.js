@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { WingBlank, Flex, List, Checkbox, Button, Icon, Modal, Popup, Progress, NavBar,ActivityIndicator} from 'antd-mobile';
+import { WingBlank, Flex, List, Checkbox, Button, Icon, Modal, Toast, Popup, Progress, NavBar,ActivityIndicator} from 'antd-mobile';
 import Tex from './renderer.js';
 import MathInput from '../../math-input/src/components/app.js'
 
@@ -15,92 +15,11 @@ class Question extends React.Component {
   constructor(props) { 
   	super(props);
   	this.onSelectChange = this.onSelectChange.bind(this);
-
-    var {exercise, exindex} = this.props;
-    const breakdown = exercise[exindex];
-    var breakdown_sn = [];
-    for(var i = 0; i < breakdown.length; i++){
-      //如果没有前置步骤的都设为0并在渲染中显示，-1代表不确定在渲染中不显示
-      const sn_state = breakdown[i].presn ? -1 : 0;
-      breakdown_sn[i] = {
-        sn: breakdown[i].sn, 
-        kpid: breakdown[i].kpid,
-        kpname: breakdown[i].kpname, 
-        sn_state: sn_state, 
-        presn: breakdown[i].presn, 
-        kp_old_rating: breakdown[i].kp_rating, 
-        sn_old_rating: breakdown[i].sn_rating
-      };
-    }
-    this.breakdown_sn = breakdown_sn;
   }
 
-  // //初始化答案及选项
-  // init(exercise){
-  //   //当前题目
-  //   var {type, title, answer} = exercise;
-  //   answer = eval(answer);
-  //   if(type == 1){
-  //       this.initXor();
-  //       var checkAnswer = 0;
-  //       for(var i = 0; i < answer.length; i++){
-  //           if(answer[i].correct)
-  //             checkAnswer += this.xornum[i];
-  //       }
-  //       this.checkAnswer = checkAnswer;
-  //       this.userAnswer = 0;
-  //   }else if(type == 0){
-  //       this.checkAnswer = answer;
-  //   }
-  // }
-
-  // //这里使用一个整数代表选项的情况，例如0011，代表选项1、2，
-  // //该数组用于每次改变选项时对指定位置进行取反操作
-  // initXor(){
-  //   this.xornum = [1, 2, 4, 8];
-  // }
-
-
-
-  // onCheck(){
-  //   //var state = this.props.location.state;
-  //   var {exindex, exercise, exsize, reward} = this.props;
-    
-  //   console.log(this.userAnswer);
-  //   //去掉首尾@字符
-  //   const length = this.checkAnswer.length;
-  //   var checkAnswer = this.checkAnswer.substr(1, length - 2);
-  //   console.log(checkAnswer);
-  //   var {breakdown} = exercise;
-  //   if(checkAnswer == this.userAnswer){
-  //     alert("答案正确");
-  //     var breakdown_sn = [];
-  //     for(var i = 0; i < breakdown.length; i++){
-  //       breakdown_sn.push({sn: breakdown[i].sn, kpid: breakdown[i].kpid, sn_state: 1, kp_old_rating: b.kp_rating, sn_old_rating: b.sn_rating});
-  //     }
-  //     //记录测试结果
-  //     var test_log = {exercise_id: exercise.exercise_id, exercise_state: 1, answer: this.userAnswer, exercise_rating: exercise.exercise_rating, breakdown_sn: breakdown_sn};
-  //     this.props.submitTestLog(test_log);
-  //   }else{
-  //     alert("答案错误");
-  //     //var breakdown_sn = breakdown.length == 1 ? [{sn: breakdown[0].sn, kpid: breakdown[0].kpid, sn_state: 0}] : [];
-  //     var test_log = {exercise_id: exercise.exercise_id, exercise_state: 0, exercise_rating: exercise.exercise_rating, answer: this.userAnswer};
-  //     console.log(test_log);
-  //     if(breakdown.length > 1){
-  //       this.props.history.push("/mobile-test/AnswerTest", test_log);
-  //     }else{
-  //       this.props.submitTestLog(test_log);
-  //     }
-  //   }
-  // }
-
-  // onSubmit(){
-    
-  // }
-
   isAllUnSelected(){
-  	var {select} = this.state;
-  	var result = true;
+  	var {test_log, exindex} = this.props;
+  	var {breakdown_sn} = test_log[exindex];
   	for(var i = 0; i < select.length; i++){
   		console.log(select[i].sn + ":" + select[i].isSelected);
   		if(select[i].isSelected){
@@ -113,7 +32,7 @@ class Question extends React.Component {
 
   onContinue(){
     this.accExerciseTime();
-    this.props.jumpNext(true);
+    this.props.jumpNext(false);
   }
 
   onInputChange(val){
@@ -282,11 +201,11 @@ class Question extends React.Component {
   }
 
   renderBreakdown(){
-    const {exercise, exindex, test_log} = this.props;
+    const {exercise, exindex, test_log, modalOpen} = this.props;
     const {breakdown, title} = exercise[exindex];
-    
-    if(test_log[exindex].answer_test){
-      var {breakdown_sn} = test_log[exindex];
+    const {exercise_state, answer_test, breakdown_sn} = test_log[exindex];
+    if(answer_test){
+      
       return (
       <List renderHeader='请选择你做对的步骤'>
         {breakdown.map((item,i) => {
@@ -302,9 +221,28 @@ class Question extends React.Component {
           }
         })}
       </List>
-      );  
+      );
+    }else if(!modalOpen && test_log[exindex].exercise_state >= 0){
+      var kpids = [];
+      return (
+        <List renderHeader={() => '相关知识点情况'} >
+          {
+            breakdown_sn.map((item) => {
+              if(!kpids[item.kpid]){
+                kpids[item.kpid] = 1;
+                return (
+                  <Item style={item.sn_state == 0 ? {backgroundColor: "#fcdbc9"} : {backgroundColor: "white"}}
+                    extra={item.kp_old_rating}>
+                    {item.kpname}
+                    
+                  </Item>
+                )
+              }
+            })
+          }
+        </List>
+      )
     }
-    
     
   }
 
@@ -314,17 +252,32 @@ class Question extends React.Component {
     if(test_log[exindex].answer_test){
       return (
         <div style={{
-                  display: 'flex',
                   position: 'fixed',
                   bottom: '0',
                   width: '100%',
                   height: "1.2rem",
                   borderTop: "solid 1px #CCC",
                   }}>
-              <Button style={{float: 'left', margin: '0.2rem 0 0 0'}}
+              <Button inline 
+                style={{margin: '0.2rem 0.5rem 0 0.5rem'}} 
+                type="primary"
+                disabled = {exindex == 0}
+                onClick={e => this.props.updateExindex(exindex-1)}
+              >
+                上一题
+              </Button>
+              <Button style={{margin: '0.2rem 0.5rem 0 0'}}
                 onClick={e => this.props.submitFeedBack(exindex)} 
                 type="primary" inline>
               提交反馈
+              </Button>
+              <Button inline 
+                style={{margin: '0.2rem 0 0 0'}} 
+                type="primary"
+                disabled = {exindex == exercise.length - 1}
+                onClick={e => this.props.updateExindex(exindex+1)}
+              >
+                下一题
               </Button>
         </div>
       )  
@@ -345,7 +298,39 @@ class Question extends React.Component {
               >
                 上一题
               </Button>
-              <Button style={{margin: '0.2rem 0.5rem 0 0'}} disabled={test_log[exindex].exercise_state >= 0}
+              <Button style={{margin: '0.2rem 0.5rem 0 0'}} 
+                onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer,student_rating)} 
+                type="primary" inline>
+              提交答案
+              </Button>
+              <Button inline 
+                style={{margin: '0.2rem 0 0 0'}} 
+                type="primary"
+                disabled = {exindex == exercise.length - 1}
+                onClick={e => this.props.updateExindex(exindex+1)}
+              >
+                下一题
+              </Button>
+          </div>
+      )
+    }else{
+      return (
+          <div style={{
+                  position: 'fixed',
+                  bottom: '0',
+                  width: '100%',
+                  height: "1.2rem",
+                  borderTop: "solid 1px #CCC",
+                  }}>
+              <Button inline 
+                style={{margin: '0.2rem 0.5rem 0 0.5rem'}} 
+                type="primary"
+                disabled = {exindex == 0}
+                onClick={e => this.props.updateExindex(exindex-1)}
+              >
+                上一题
+              </Button>
+              <Button style={{margin: '0.2rem 0.5rem 0 0'}} disabled
                 onClick={e => this.props.submitExerciseLog(exercise[exindex], test_log[exindex].answer,student_rating)} 
                 type="primary" inline>
               提交答案
@@ -363,11 +348,19 @@ class Question extends React.Component {
     }
   }
 
+
   render() {
-    const {exercise, exindex, test_log, record,isFetching} = this.props;
+    const {exercise, exindex, test_log, record, feedbackToast, answer_test, isFetching} = this.props;
     console.log(exindex);
     const { title, options } = exercise[exindex];
-
+    
+    if(feedbackToast){
+      Toast.success("谢谢你的反馈", 1, () => {
+        this.props.hideFeedbackToast();
+        this.accExerciseTime();
+        this.props.jumpNext(true);
+      })
+    }
     /*
     // <div style={{ margin: '0 0.30rem', width: '1.6rem!important', margin: '0.18rem 0.18rem 0.18rem 0'}}>
     //     <Flex>
@@ -424,8 +417,9 @@ class Question extends React.Component {
 export default connect(state => {
   const test_state = state.testData.toJS();
   console.log(test_state);
-  const {exercise, exindex, test_log, modalOpen, record, exercise_st, start_time, answer_test , isFetching,student_rating} = test_state;
+  const {exercise, exindex, test_log, test_status, modalOpen, feedbackToast, record, exercise_st, start_time, answer_test , isFetching, student_rating} = test_state;
   return {
+    test_status: test_status,
     //整个测试以同一个开始时间
     start_time: start_time,
     //跳转题目页面开始时间
@@ -436,6 +430,7 @@ export default connect(state => {
     modalOpen: modalOpen,
     student_rating : student_rating,
     record: record,
+    feedbackToast: feedbackToast,
     answer_test: answer_test,
     isFetching : isFetching,
   }; 

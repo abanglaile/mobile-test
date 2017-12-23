@@ -262,16 +262,19 @@ const getChapterSuccess = (json) => {
 
 //获取章节数据
 export const getMyChapter = (student_id, course_id) => {
-    let url = target + '/klmanager/getMyChapter';
+    let url = target + '/klmanager/getBookChapter';
     return dispatch => {
         dispatch(getDataStart());
         return NetUtil.get(url, {student_id, course_id}, json => {
+            console.log(json);
             dispatch(getChapterSuccess(json));
         }, errors => {
             console.log(errors);
         });
     }
 }
+
+/*----------------------个人中心--------------------*/
 
 //获取指定测试数据
 export const getTestExercise = (student_id, test_id) => {
@@ -318,24 +321,8 @@ export const getMyTestList = (student_id) => {
     }
 }
 
-//单题模式
-export const jumpToExercise = (exercise_id) => {
-    let url = target + '/klmanager/getExerciseByID';
-    return dispatch => {
-        dispatch(getTestStart());
-        return NetUtil.get(url, {exercise_id, 'student_id': '1'}, json => {
-            //单题模式test_id为-1 
-            console.log(json);
-            dispatch(getTestSuccess(json, -1));
-            dispatch(push("/mobile-test/Question"));
-            dispatch(updateExerciseST());
-        }, errors => {
-            console.log(errors);
-        });
-    }
-}
-
 export const submitFeedBack = (exindex) => {
+    console.log(exindex);
     return {
         type: 'SUBMIT_FEEDBACK',
         exindex,
@@ -344,17 +331,20 @@ export const submitFeedBack = (exindex) => {
 
 /**
  * 提交后跳转到下一题
- * @param  {Boolean} answerTestDisplay [true:题目页面跳转/false:导学页面跳转]
+ * @param  {Boolean} answer_test [true:当前为导学页面/false:当前不为导学页面]
  */
 export const jumpNext = (answer_test) => {
+    console.log('jumpNext');
     return (dispatch, getState) => {
         const testData = getState().testData;
         const exindex = testData.get("exindex");
         const test_log = testData.get("test_log").toJS();
         const exercise = testData.get("exercise").toJS();
-        const exercise_state = test_log[exindex].exercise_state;
+        const {exercise_state} = test_log[exindex];
         const blength = exercise[exindex].breakdown.length;
-        if(!answer_test || exercise_state || blength == 1){
+
+        if(answer_test || exercise_state || blength == 1){
+            
             var next = -1;
             var i = (exindex + 1)%exercise.length;
             while(i != exindex){
@@ -364,6 +354,7 @@ export const jumpNext = (answer_test) => {
                 }
                 i = ++i%exercise.length;
             }
+            console.log('next' + next);
             //还有未完成的题目
             if(next >= 0){
                 console.log('update');
@@ -401,17 +392,31 @@ export const jumpNext = (answer_test) => {
         }else{
             console.log('jump');
             dispatch(closeModal());
-            dispatch(updateAnswerTest(exindex, 1));
+            dispatch(showAnswerTest(exindex));
             //dispatch(push("/mobile-test/AnswerTest"));
         }
     }
 }
 
-export const updateAnswerTest = (exindex, answer_test) => {
+export const showAnswerTest = (exindex) => {
+    console.log(exindex);
     return {
-        type: 'UPDATE_ANSWER_TEST',
+        type: 'SHOW_ANSWER_TEST',
         exindex,
-        answer_test: answer_test,
+    }
+}
+
+// export const hideAnswerTest = (exindex) => {
+//     return {
+//         type: 'HIDE_ANSWER_TEST',
+//         exindex,
+//     }
+// }
+
+export const hideFeedbackToast = () => {
+    console.log('hideFeedbackToast');
+    return {
+        type: 'HIDE_FEEDBACK_TOAST'
     }
 }
 
@@ -571,6 +576,8 @@ export const submitExerciseLog = (exercise, log_answer, student_rating) => {
             exercise_id: exercise_id, 
             exercise_state: result,
             submit_time: new Date(),
+            old_exercise_rating: exercise_rating,
+            old_student_rating: student_rating,
             delta_exercise_rating: Math.ceil(K*(ex_SA - ex_delta)), 
             delta_student_rating: Math.ceil(K*(st_SA - st_delta)),
         };

@@ -1,14 +1,13 @@
 ﻿import React from 'react';
 import *as action from '../Action/';
 import {connect} from 'react-redux';
-import { List, Result, Icon, WhiteSpace, Badge, Tabs, ActivityIndicator, Button, Modal, Grid } from 'antd-mobile';
+import { List, Result, Icon, WhiteSpace, ActivityIndicator, Button, Flex, Modal } from 'antd-mobile';
 import { Progress } from 'antd';
 
 import Tex from './renderer.js';
 
 const Item = List.Item;
 const Brief = Item.Brief;
-const TabPane = Tabs.TabPane;
 
 class TestResult extends React.Component {
   constructor(props) {
@@ -24,11 +23,6 @@ class TestResult extends React.Component {
     }else{
       alert("页面参数错误");
     }
-  }
-
-  //补零
-  PrefixInteger(num, n) {
-    return (Array(n).join(0) + num).slice(-n);
   }
 
   renderModal(){
@@ -102,29 +96,6 @@ class TestResult extends React.Component {
       );
   }
 
-  jumpToExercise(i){
-    this.props.updateExindex(i);
-    this.props.router.push("/mobile-test/Question/");
-  }
-
-  renderExerciseList2(){
-    const {test_log} = this.props;
-
-    return (
-        <Grid data={test_log} hasLine={false} onClick={(e, i) => this.jumpToExercise(i)}
-            columnNum={5}
-            renderItem={(dataItem,i) => (
-              <svg width="75px" height="75px" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg">
-
-                <circle cx="50%" cy="50%" r="20%" stroke="blue" fill="white" />
-                <text dx="45%" dy="57%" fontSize="0.3rem" style={{fill: 'blue'}}>{i+1}</text>
-              </svg>
-            )} 
-        />
-      );
-  }
-
   render() {
     var {isFetching, correct, test_log} = this.props;
     correct = correct ? correct : 0;
@@ -132,38 +103,49 @@ class TestResult extends React.Component {
     const accurracy = test_log.length ? correct/test_log.length : 0;
     return (
       <div>
+        <NavBar
+          mode="light"
+          onLeftClick={() => this.props.history.goBack()}
+        >测试详情</NavBar>
         <Result
-          title={<Progress type="circle" percent={accurracy} />}
-          message={'测试结果' + correct + '/' + test_log.length}
+          title={<div><div style={{marginBottom: '0.2rem'}}><b style={{fontSize: '0.4rem', color: 'blue'}}>音程</b></div>}
+          message={<div>平均答对<span>{((test_status.avg_accurracy*test_status.test_size)/100).toFixed(1)}</span>题</div>}
         />
-        <Tabs defaultActiveKey="1">
-          <TabPane tab="题目情况" key="1">
-            {this.renderExerciseList2()}
-            <List className="my-list">
-              {this.renderKpList()}
-            </List>
-          </TabPane>
-          <TabPane tab="知识点" key="2">
-            
-          </TabPane>
-        </Tabs>
-        <div style={{
-            display: 'flex',
-            position: 'fixed',
-            bottom: '0',
-            zIndex: "100",
-            width: '100%',
-            height: "1.3rem",
-            borderTop: "solid 1px #CCC",
-            }}>
-          <Button style={{float: 'left', margin: '0.2rem 0 0 60%'}}
-            onClick={e => console.log(e)} 
-            type="ghost" inline>
-          返回测试列表
-          </Button>
-        </div>
-        <ActivityIndicator animating = {isFetching}/>
-        {this.renderModal()}
+        <WhiteSpace size='lg' />
+        <Flex>
+          <Flex.Item><div style={{
+                  textAlign: 'center',
+                  height: '0.4rem',
+                  lineHeight: '0.4rem',
+                  width: '100%',
+                  fontSize: '0.4rem',
+                }} >{test_status.test_submit}</div>
+                <div style={{
+                  textAlign: 'center',
+                  height: '0.5rem',
+                  lineHeight: '0.5rem',
+                  width: '100%',
+                  fontSize: '0.3rem',
+                  color: '#00FFFF',
+                }}>练习次数</div>
+          </Flex.Item>
+          <Flex.Item><div style={{
+                  textAlign: 'center',
+                  height: '0.4rem',
+                  lineHeight: '0.5rem',
+                  width: '100%',
+                  fontSize: '0.4rem',
+                }} >{test_status.test_students}</div>
+                <div style={{
+                  textAlign: 'center',
+                  height: '0.5rem',
+                  lineHeight: '0.4rem',
+                  width: '100%',
+                  fontSize: '0.3rem',
+                  color: '#00FFFF',
+                }}>正确率</div>
+          </Flex.Item>
+        </Flex>
       </div>
     );
   }

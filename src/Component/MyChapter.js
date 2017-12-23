@@ -21,9 +21,11 @@ class MyChapter extends React.Component {
     const {book} = this.props;
     const accordion = book.map((bookitem,i) => (
               <Accordion.Panel header={bookitem.bookname}>
-                <List className="my-list">
+                <List>
                   {
-
+                    bookitem.chapters.map((chapteritem, i) => (
+                      <List.Item onClick={e => this.props.router.push("/mobile-test/mychapterkp")}>{chapteritem}</List.Item>
+                    ))
                   }
                 </List>
               </Accordion.Panel>
@@ -51,11 +53,11 @@ class MyChapter extends React.Component {
 
 
 export default connect((state, ownProps) => {
-  const student_state = state.requestData;
-  const {book, course_id} = student_state;
+  const studentData = state.studentData.toJS();
+  const {book, course_id} = studentData;
   return {
     book: book,
-    course_id: course_id,
+    course_id: 3,
     student_id: state.AuthData.get('userid'),
   };
 }, action)(MyChapter);

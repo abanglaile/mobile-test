@@ -14,6 +14,7 @@ const defaulatTestData = Immutable.fromJS({
     });
 const defaulatStudentData = Immutable.fromJS({
         isFetching: false,
+        book: [],
         my_test_list: [],
     });
 
@@ -90,14 +91,11 @@ export const testData = (state = defaulatTestData, action = {}) => {
         case 'GET_TEST_START':
             return state.set('isFetching', true);
         case 'GET_TEST_STATUS_SUCCESS':
-            console.log(action.json);
             return state.set('test_status', Immutable.fromJS(action.json.test_status))
                 .set('test_id', action.test_id);
         case 'GET_TEST_RANKLIST_SUCCESS':
-            console.log(action.json);
             return state.set('ranking_list', Immutable.fromJS(action.json));
         case 'GET_STU_TESTINFO_SUCCESS':
-            console.log(action.json);
             return state.set('isFinish', action.json.isFinish)
                         .set('student_rating', action.json.student_rating);
         case 'GET_TEST_SUCCESS':
@@ -138,16 +136,12 @@ export const testData = (state = defaulatTestData, action = {}) => {
                 isFetching: false,
                 modalOpen: false,
             };
-            console.log(newState);
             
             return state.mergeDeep(Immutable.fromJS(newState));
-            //console.log(newState.toJS());
-            //return newState;
             break;
         case 'GET_TEST_EXERCISE_SUCCESS':
             return state.set('exercise', Immutable.fromJS(action.json));
         case 'GET_TEST_RESULT_SUCCESS':
-            console.log(action.json);
             return state.set('test_log', Immutable.fromJS(action.json.test_log))
                 .set('test_kp', Immutable.fromJS(action.json.test_kp))
                 .set('correct', action.json.correct)
@@ -162,8 +156,10 @@ export const testData = (state = defaulatTestData, action = {}) => {
             return state.updateIn(['test_log', action.i, 'ac_time'], ac_time => ac_time + action.ac_time);
         case 'UPDATE_FINISH_TIME':
             return state.set("finish_time", new Date());
-        case 'UPDATE_ANSWER_TEST':
-            return state.setIn(["test_log", action.exindex, 'answer_test'], action.answer_test);
+        case 'SHOW_ANSWER_TEST':
+            return state.setIn(["test_log", action.exindex, 'answer_test'], true);
+        case 'HIDE_FEEDBACK_TOAST':
+            return state.set('feedbackToast', false);
         case 'CLOSE_MODAL':
             return state.set('modalOpen', false);
         case 'SUBMIT_EXERCISE_LOG':
@@ -187,7 +183,6 @@ export const testData = (state = defaulatTestData, action = {}) => {
             const val = action.index;
 
             var breakdown_sn = state.getIn(['test_log', action.exindex, 'breakdown_sn']).toJS();
-            console.log(val, breakdown_sn);
             breakdown_sn[val].sn_state = breakdown_sn[val].sn_state ? 0 : 1;
             //取消选择，将以这步作为前置的步骤全部设为不确定-1并不渲染显示
             for(var i = 0; i < breakdown_sn.length; i++){
@@ -198,7 +193,7 @@ export const testData = (state = defaulatTestData, action = {}) => {
             }
             return state.setIn(['test_log', action.exindex, 'breakdown_sn'], Immutable.fromJS(breakdown_sn));
         case 'SUBMIT_FEEDBACK':
-            return state.set('modalOpen', true);
+            return state.setIn(['test_log', action.exindex, 'answer_test'], false).set('feedbackToast', true);
         case 'SUBMIT_TEST_START':
             return state;
         case 'SUBMIT_TEST_SUCCESS':
@@ -208,13 +203,14 @@ export const testData = (state = defaulatTestData, action = {}) => {
     }
 }
 
+
 //获取测试数据
 export const studentData = (state = defaulatStudentData, action = {}) => {
     switch(action.type){
         case 'GET_DATA_START':
             return state.set('isFetching', true);
         case 'GET_CHAPTER_SUCCESS':
-            return state;//Object.assign({}, state, {isFetching: false, book: action.json});
+            return state.set('book', action.json).set('isFetching', false);
         case 'GET_MYTEST_SUCCESS':
             return state.set('my_test_list', action.json).set('isFetching', false);
         default:
