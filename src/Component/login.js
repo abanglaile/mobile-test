@@ -6,10 +6,6 @@ import { createForm } from 'rc-form';
 import *as action from '../Action/';
 import {connect} from 'react-redux';
 
-const TabPane = Tabs.TabPane;
-const Item = List.Item;
-const Brief = Item.Brief;
-
 
 class LoginView extends React.Component {
   constructor(props) { 
@@ -42,63 +38,68 @@ class LoginView extends React.Component {
 
   render() {
     const { getFieldProps } = this.props.form;
+    const tabs = [
+      { title: '注册'},
+      { title: '登录'},
+    ];
     
     return (
-    <div>
-      <div style={{ textAlign: 'center', margin: '2rem 0 0 0 auto', height: '3rem', backgroundColor: '#fff', fontSize: '1rem' }}>
-          知秋 
-      </div>
-      <ActivityIndicator toast animating={false} />
-      
-      <Tabs defaultActiveKey="2">
-      <TabPane tab="注册" key="1">
-        <List>
-          <InputItem
-            placeholder="姓名"
-          ></InputItem>
-          <InputItem
-            type="phone"
-            placeholder="手机号"
-          ></InputItem>
-          <InputItem
-            type="password"
-            placeholder="密码"
-          ></InputItem>
-        </List>
-      </TabPane>
-      <TabPane tab="登录" key="2">
-        <form>
-          <List>
-            <InputItem
-              {...getFieldProps('userName', {
-                rules: [
-                  { required: true, message: '请输入手机号或姓名' },
-                ],
-              })}
-              placeholder="手机号或姓名"
-          ></InputItem>
-            <InputItem {...getFieldProps('password')} placeholder="密码" type="password">
-            </InputItem>
-          </List>
-        </form>
-        <WhiteSpace />
-        <WingBlank>
-        <div style={{marginTop: '0.5rem'}}>
-          <Button type="primary" onClick={(e)=>this.handleSubmitLogin(e)}>
-              登录
-          </Button>
-          <WhiteSpace />
-          <a style={{ fontSize: '0.3rem'}}>手机验证码登录</a>
+      <div>
+        <div style={{ textAlign: 'center', margin: '2rem 0 0 0 auto', height: '3rem', backgroundColor: '#fff', fontSize: '1rem' }}>
+            知秋 
         </div>
-        </WingBlank>
+        <ActivityIndicator toast animating={false} />
         
-      </TabPane>
-      </Tabs>
-        
-      <WhiteSpace />
+        <Tabs tabs={tabs}
+         initialPage={2}>
+         <div>  
+           <List>
+              <InputItem
+                placeholder="姓名"
+              ></InputItem>
+              <InputItem
+                type="phone"
+                placeholder="手机号"
+              ></InputItem>
+              <InputItem
+                type="password"
+                placeholder="密码"
+              ></InputItem>
+            </List>
+         </div>
+          
+         <div>
+            <form>
+              <List>
+                <InputItem
+                  {...getFieldProps('userName', {
+                    rules: [
+                      { required: true, message: '请输入手机号或姓名' },
+                    ],
+                  })}
+                  placeholder="手机号或姓名"
+                ></InputItem>
+                <InputItem {...getFieldProps('password')} placeholder="密码" type="password">
+                </InputItem>
+              </List>
+            </form>
+            <WhiteSpace />
+            <WingBlank>
+            <div style={{marginTop: '0.5rem'}}>
+              <Button type="primary" onClick={(e)=>this.handleSubmitLogin(e)}>
+                  登录
+              </Button>
+              <WhiteSpace />
+              <a style={{ fontSize: '0.3rem'}}>手机验证码登录</a>
+            </div>
+            </WingBlank>
+         </div>
 
-    </div>
-    
+        </Tabs>
+          
+        <WhiteSpace />
+
+      </div>
     );
   }
 }
