@@ -18,6 +18,12 @@ const defaulatStudentData = Immutable.fromJS({
         my_test_list: [],
     });
 
+const defaulatStuStatus = Immutable.fromJS({
+        isFetching: false,
+        capatity: [{}],
+        ladder : [{}],
+    });
+
 const defaulatAuthData = Immutable.fromJS({
         token: null,
         userName: null,
@@ -213,6 +219,20 @@ export const studentData = (state = defaulatStudentData, action = {}) => {
             return state.set('book', action.json).set('isFetching', false);
         case 'GET_MYTEST_SUCCESS':
             return state.set('my_test_list', action.json).set('isFetching', false);
+        default:
+            return state;
+    }
+}
+
+//获取学生学情数据
+export const stuStatus = (state = defaulatStuStatus, action = {}) => {
+    switch(action.type){
+        case 'GET_STATUS_START':
+            return state.set('isFetching', true);
+        case 'GET_ABILITY_STATUS_SUCCESS':
+            return state.set('capatity', Immutable.fromJS(action.json));
+        case 'GET_LADDER_STATUS_SUCCESS':
+            return state.set('ladder', Immutable.fromJS(action.json));
         default:
             return state;
     }

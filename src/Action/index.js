@@ -182,6 +182,12 @@ const getTestStart = () => {
     type: 'GET_TEST_START',
   }
 }
+//开始获取学生学情数据
+const getStatusStart = () => {
+  return {
+    type: 'GET_STATUS_START',
+  }
+}
 
 //获取测试数据成功
 const getMyTestSuccess = (json) => {
@@ -227,6 +233,20 @@ const getStuTestInfoSuccess = (json) => {
 const getTestRankingListSuccess = (json) => {
     return {
         type: 'GET_TEST_RANKLIST_SUCCESS',
+        json,
+    }
+}
+
+const getStuAbilitySuccess = (json) => {
+    return {
+        type: 'GET_ABILITY_STATUS_SUCCESS',
+        json,
+    }
+}
+
+const getStuLadderSuccess = (json) => {
+    return {
+        type: 'GET_LADDER_STATUS_SUCCESS',
         json,
     }
 }
@@ -652,6 +672,30 @@ export const getStuTestInfo = (student_id,test_id) => {
         let url = target + '/klmanager/getStuTestInfo';
         return NetUtil.post(url, {student_id,test_id}, json => {
             dispatch(getStuTestInfoSuccess(json));
+        }, errors => {
+            console.log(errors);
+        });
+    }
+}
+//获取学生综合能力情况
+export const getStuAbility = (student_id) => {
+    return (dispatch) => {
+        dispatch(getStatusStart());
+        let url = target + '/klmanager/getStuAbility';
+        return NetUtil.post(url, {student_id}, json => {
+            dispatch(getStuAbilitySuccess(json));
+        }, errors => {
+            console.log(errors);
+        });
+    }
+}
+//获取学生天梯分数变化情况
+export const getStuLadder = (student_id) => {
+    return (dispatch) => {
+        dispatch(getStatusStart());
+        let url = target + '/klmanager/getStuLadder';
+        return NetUtil.post(url, {student_id}, json => {
+            dispatch(getStuLadderSuccess(json));
         }, errors => {
             console.log(errors);
         });
